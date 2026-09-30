@@ -19,6 +19,7 @@
 .badge-approved{background:#dcfce7;color:#166534}
 .badge-pending{background:#fef3c7;color:#d97706}
 .badge-rejected{background:#fee2e2;color:#b91c1c}
+.badge-archived{background:#f3f4f6;color:#4b5563}
 @media(max-width:850px){.app{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.top{padding:0 12px}.content{padding:17px}}
 </style>
 </head>
@@ -47,6 +48,7 @@
       <button class="on" data-nav="dashboard">⌂ &nbsp; Dashboard</button>
       <button data-nav="folders">▰ &nbsp; Training folders</button>
       <button data-nav="materials">▣ &nbsp; All materials</button>
+      <button data-nav="archived">📦 &nbsp; Archived</button>
       <button data-nav="favorites">★ &nbsp; Favorites</button>
       <button data-nav="validation">🛡️ &nbsp; Validation log</button>
       <button data-nav="admin">⚙️ &nbsp; Administration</button>
@@ -134,6 +136,7 @@ function statusBadge(status) {
   let s = (status || 'published').toLowerCase();
   if (s.includes('pending')) return '<span class="badge badge-pending">⏳ Pending Approval</span>';
   if (s.includes('reject')) return '<span class="badge badge-rejected">❌ Rejected</span>';
+  if (s.includes('archive')) return '<span class="badge badge-archived">📦 Archived</span>';
   return '<span class="badge badge-approved">✅ Approved</span>';
 }
 
@@ -282,7 +285,10 @@ function renderNotifications() {
 
 function filtered() {
   let q = search.toLowerCase();
-  return state.items.filter(x => (!folder || x.folderId == folder) && (!q || [x.title, x.description, x.keywords, x.version, x.assessment, x.dataset].join(' ').toLowerCase().includes(q)) && (nav !== 'favorites' || x.favorite));
+  let activeItems = state.items.filter(x => x.status !== 'archived');
+  if (nav === 'archived') activeItems = state.items.filter(x => x.status === 'archived');
+  
+  return activeItems.filter(x => (!folder || x.folderId == folder) && (!q || [x.title, x.description, x.keywords, x.version, x.assessment, x.dataset].join(' ').toLowerCase().includes(q)) && (nav !== 'favorites' || x.favorite));
 }
 
 function render() {
@@ -290,6 +296,7 @@ function render() {
   
   if (nav === 'admin') return renderAdmin();
   if (nav === 'validation') return renderValidation();
+  if (nav === 'archived') return renderArchived();
 
   let title = folder ? (state.folders.find(f => f.id == folder)?.name || 'Folder') : (nav === 'folders' ? 'Training folders' : nav === 'materials' ? 'All materials' : nav === 'favorites' ? 'Favorites' : 'Training Dashboard');
   document.getElementById('title').textContent = title;
@@ -300,12 +307,19 @@ function render() {
   renderItems();
 }
 
+function renderArchived() {
+  document.getElementById('title').textContent = 'Archived Training Materials';
+  document.getElementById('subtitle').textContent = 'Outdated training courses stored in the archive.';
+  let archivedItems = state.items.filter(x => x.status === 'archived');
+  document.getElementById('view').innerHTML = `
+    <div class="grid">${archivedItems.map(card).join('') || '<div class="empty">No archived materials found.</div>'}</div>`;
+  bindCards();
+}
+
 function renderDashboard() {
-  let v = state.items;
+  let v = state.items.filter(x => x.status !== 'archived');
   let totalFiles = v.reduce((a, x) => a + x.files.length, 0);
-  let pendingCount = state.logs.filter(l => l.status === 'pending').length;
-  
-  // Sort items by creation/update date descending for the newly added list
+  let pendingCount = state.items.filter(x => x.status === 'pending').length;
   let sortedItems = [...v].sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
   document.getElementById('view').innerHTML = `
@@ -406,6 +420,7 @@ function card(x) {
         <button class="small" data-open="${x.id}">Open</button>
         <button class="small" data-edit="${x.id}">✏️ Edit</button>
         <button class="small" data-fav="${x.id}">${x.favorite ? '★' : '☆'}</button>
+        ${currentRole === 'admin' && x.status !== 'archived' ? `<button class="small" style="background:#f3f4f6;" data-archive="${x.id}">📦 Archive</button>` : ''}
         ${currentRole === 'admin' ? `<button class="small" data-del="${x.id}">Delete</button>` : ''}
       </div>
     </div>`;
@@ -419,6 +434,16 @@ function bindCards() {
     x.favorite = !x.favorite;
     await _supabase.from('training_materials').update({ favorite: x.favorite }).eq('id', x.id);
     await load();
+  });
+  document.querySelectorAll('[data-archive]').forEach(b => b.onclick = async () => {
+    if (currentRole !== 'admin') return;
+    if (confirm('Move this training material to the archive?')) {
+      let x = state.items.find(x => x.id == b.dataset.archive);
+      await _supabase.from('training_materials').update({ status: 'archived' }).eq('id', x.id);
+      logActivity('Material Archived', `Archived material: ${x?.title}`, 'archived');
+      await load();
+      toast('Moved to Archive');
+    }
   });
   let delBtn = document.querySelectorAll('[data-del]');
   delBtn.forEach(b => b.onclick = async () => {
@@ -473,8 +498,6 @@ function openEditMaterial(id) {
 
 function detail(id) {
   let x = state.items.find(x => x.id == id), f = state.folders.find(f => f.id == x.folderId);
-  
-  // Find any active rejection log for this material if logged in as trainer
   let logItem = state.logs.find(l => l.status === 'rejected' && l.payload && l.payload.includes(id));
 
   document.getElementById('title').textContent = x.title;
@@ -550,7 +573,7 @@ function renderAdmin() {
               <td style="padding:10px; text-align:right;">
                 ${currentRole === 'admin' && u.email !== 'yassin.khaiar@hps-worldwide.com' ? `
                   <button class="small" style="background:#fef3c7; color:#d97706;" onclick="resetUserPassword('${esc(u.email)}')">🔑 Reset PW</button>
-                  <button class="small" style="background:#fee2e2; color:#b91c1c;" onclick="removeUser('${esc(u.id)}')">🗑️ Remove</button>
+                  <button class="small" style="background:#fee2e2; color:#b91c1c;" onclick="removeUser('${esc(u.id)}')">🗑️️ Remove</button>
                 ` : '<span class="muted">Protected</span>'}
               </td>
             </tr>`).join('') || '<tr><td colspan="4" style="padding:20px; text-align:center;" class="muted">No user profile records found.</td></tr>'}
@@ -562,7 +585,6 @@ function renderAdmin() {
 async function resetUserPassword(email) {
   let newPass = prompt(`Enter new temporary password for ${email}:`);
   if (!newPass) return;
-  // Note: Password resets require admin server functions or Supabase admin auth API. Simulated feedback:
   toast(`Password reset initiated for ${email}`);
   logActivity('Password Reset', `Admin reset password for ${email}`, 'published');
 }
@@ -646,11 +668,22 @@ async function approveLog(logId) {
 
 async function rejectLog(logId) {
   let reason = prompt('Please enter the reason for rejecting this material:');
-  if (!reason) return;
-  
-  let { error } = await _supabase.from('activity_logs').update({ status: 'rejected', reject_reason: reason }).eq('id', logId);
+  if (!reason || !reason.trim()) return toast('Rejection cancelled: reason required.');
+
+  let logItem = state.logs.find(l => l.id == logId);
+  if (logItem && logItem.payload) {
+    try {
+      let data = JSON.parse(logItem.payload);
+      if (data.id) {
+        await _supabase.from('training_materials').update({ status: 'rejected' }).eq('id', data.id);
+      }
+    } catch(e) { console.warn('Payload parse error:', e); }
+  }
+
+  let { error } = await _supabase.from('activity_logs').update({ status: 'rejected', reject_reason: reason.trim() }).eq('id', logId);
   if (error) { toast('Error updating rejection'); return; }
-  toast('Request rejected with reason recorded.');
+  
+  toast('Request rejected and trainer notified.');
   await load();
 }
 
@@ -734,9 +767,16 @@ document.getElementById('materialForm').onsubmit = async e => {
   if (currentRole === 'trainer') {
     let actionType = editId ? 'Material Edit Request' : 'Material Create Request';
     if (editId) materialData.id = editId;
+    
+    // Also temporarily set the material status to pending in DB so user sees it right away
+    if (editId) {
+      await _supabase.from('training_materials').update({ status: 'pending' }).eq('id', editId);
+    }
+
     logActivity(actionType, `Trainer submitted material: ${materialData.title}`, 'pending', materialData);
     closeM('materialModal');
     toast('⚠️ Submitted! Check Validation section for your approval status.');
+    await load();
     return;
   }
 
