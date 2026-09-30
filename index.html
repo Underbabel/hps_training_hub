@@ -322,6 +322,8 @@ function detail(id) {
           <div class="kv"><b>Estimated time</b><span>${esc(x.time || '—')}</span></div>
           <div class="kv"><b>PowerCARD Version</b><span>${esc(x.version || '—')}</span></div>
           <div class="kv"><b>Assessment</b><span>${esc(x.assessment || '—')}</span></div>
+          <div class="kv"><b>Dataset / Simulation</b><span>${esc(x.dataset || '—')}</span></div>
+          <div class="kv"><b>One-pager / Mindmap</b><span>${esc(x.onepager || '—')}</span></div>
           <div class="kv"><b>eAcademy EN</b><span>${x.en ? `<a href="${esc(x.en)}" target="_blank">Open EN</a>` : '—'}</span></div>
           <div class="kv"><b>eAcademy FR</b><span>${x.fr ? `<a href="${esc(x.fr)}" target="_blank">Open FR</a>` : '—'}</span></div>
         </div>
