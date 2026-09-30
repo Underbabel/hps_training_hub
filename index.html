@@ -386,14 +386,11 @@ document.getElementById('materialForm').onsubmit = async e => {
 
   for (let file of pendingFiles) {
     let filePath = `materials/${materialId}/${Date.now()}_${file.name}`;
-    console.log('Uploading file to bucket:', filePath);
-
     let { data: uploadData, error: uploadErr } = await _supabase.storage.from('training-files').upload(filePath, file);
 
     if (uploadErr) {
       console.error('Storage upload failed:', uploadErr);
     } else {
-      console.log('Storage upload success:', uploadData);
       let { error: fileDbErr } = await _supabase.from('material_files').insert([{
         material_id: materialId,
         file_name: file.name,
@@ -401,7 +398,6 @@ document.getElementById('materialForm').onsubmit = async e => {
         file_size: file.size
       }]);
       if (fileDbErr) console.error('File DB record error:', fileDbErr);
-      else console.log('File successfully linked in DB!');
     }
   }
 
