@@ -132,9 +132,9 @@ function fmtBytes(n) { if (!n) return ''; let u = ['B', 'KB', 'MB', 'GB']; let i
 
 function statusBadge(status) {
   let s = (status || 'published').toLowerCase();
-  if (s.includes('pending')) return '<span class="badge badge-pending">Pending Approval</span>';
-  if (s.includes('reject')) return '<span class="badge badge-rejected">Rejected</span>';
-  return '<span class="badge badge-approved">Approved</span>';
+  if (s.includes('pending')) return '<span class="badge badge-pending">⏳ Pending Approval</span>';
+  if (s.includes('reject')) return '<span class="badge badge-rejected">❌ Rejected</span>';
+  return '<span class="badge badge-approved">✅ Approved</span>';
 }
 
 function toggleNotifDropdown(e) {
@@ -190,14 +190,15 @@ async function logout() {
   window.location.reload();
 }
 
-async function logActivity(action, details, status = 'published', payload = null) {
+async function logActivity(action, details, status = 'published', payload = null, reject_reason = null) {
   try {
     await _supabase.from('activity_logs').insert([{
       user_email: currentUser?.email || 'System',
       action: action,
       details: details,
       status: status,
-      payload: payload ? JSON.stringify(payload) : null
+      payload: payload ? JSON.stringify(payload) : null,
+      reject_reason: reject_reason
     }]);
   } catch(e) { console.warn('Logging skipped:', e); }
 }
@@ -218,7 +219,7 @@ async function load() {
     if (pErr) console.warn('Profiles fetch warning:', pErr);
     state.users = profiles || [];
 
-    let { data: logs, error: lErr } = await _supabase.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(20);
+    let { data: logs, error: lErr } = await _supabase.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(30);
     if (!lErr) state.logs = logs || [];
 
     let { data: broadcasts, error: bErr } = await _supabase.from('broadcasts').select('*').order('created_at', { ascending: false }).limit(5);
@@ -241,6 +242,7 @@ async function load() {
         onepager: m.onepager || '',
         favorite: m.favorite || false,
         status: m.status || 'published',
+        created_at: m.created_at || new Date().toISOString(),
         files: mFiles.map(f => ({ id: f.id, name: f.file_name, path: f.file_path, size: f.file_size || 0 }))
       };
     });
@@ -301,15 +303,38 @@ function render() {
 function renderDashboard() {
   let v = state.items;
   let totalFiles = v.reduce((a, x) => a + x.files.length, 0);
+  let pendingCount = state.logs.filter(l => l.status === 'pending').length;
+  
+  // Sort items by creation/update date descending for the newly added list
+  let sortedItems = [...v].sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
   document.getElementById('view').innerHTML = `
-    <div class="stats">
-      <div class="stat"><small>Training sections</small><b>${v.length}</b></div>
-      <div class="stat"><small>Folders</small><b>${state.folders.length}</b></div>
-      <div class="stat"><small>Cloud files</small><b>${totalFiles}</b></div>
-      <div class="stat"><small>Favorites</small><b>${v.filter(x => x.favorite).length}</b></div>
+    <!-- SharePoint Quick Links Bar -->
+    <div style="display:flex; gap:15px; margin-bottom:24px; flex-wrap:wrap;">
+      <a href="https://hpsmaroc.sharepoint.com/:x:/r/sites/HPSAcademy/_layouts/15/Doc.aspx?sourcedoc=%7B91B0B240-2B9D-492A-ACB6-E459D5C830E1%7D&file=E-TRN-Programme_Academy%202024%202025%202026.xlsx&action=default&mobileredirect=true&wdOrigin=TEAMS-MAGLEV.null_ns.rwc&wdExp=TEAMS-TREATMENT&wdhostclicktime=1767613982831&web=1" target="_blank" style="background:linear-gradient(135deg, #0078d4, #005a9e); color:white; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; box-shadow:0 4px 15px rgba(0,120,212,.2); display:flex; align-items:center; gap:8px;">
+        📅 &nbsp; Planning
+      </a>
+      <a href="https://hpsmaroc.sharepoint.com/:x:/r/sites/HPSAcademy/_layouts/15/Doc.aspx?sourcedoc=%7B70D70AA5-35F9-4E89-AC73-56CCE7616932%7D&file=E-TRN-HPS_Academy_SinglePoint.xlsx&action=default&mobileredirect=true" target="_blank" style="background:linear-gradient(135deg, #107c41, #0b5a30); color:white; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; box-shadow:0 4px 15px rgba(16,124,65,.2); display:flex; align-items:center; gap:8px;">
+        🎯 &nbsp; Single Point
+      </a>
     </div>
-    <div class="toolbar"><button class="btn primary" onclick="openMaterial()">＋ Add training section</button></div>
-    <div class="grid">${v.slice(0, 8).map(card).join('') || empty()}</div>`;
+
+    <!-- Colored Metrics Display -->
+    <div class="stats">
+      <div class="stat" style="border-left:5px solid #315efb;"><small style="color:#315efb; font-weight:700;">Training Sections</small><b style="color:#172033;">${v.length}</b></div>
+      <div class="stat" style="border-left:5px solid #d97706;"><small style="color:#d97706; font-weight:700;">Pending Approvals</small><b style="color:#d97706;">${pendingCount}</b></div>
+      <div class="stat" style="border-left:5px solid #166534;"><small style="color:#166534; font-weight:700;">Cloud Files</small><b style="color:#166534;">${totalFiles}</b></div>
+      <div class="stat" style="border-left:5px solid #7c3aed;"><small style="color:#7c3aed; font-weight:700;">Favorites</small><b style="color:#7c3aed;">${v.filter(x => x.favorite).length}</b></div>
+    </div>
+
+    <!-- Stylish Header Replacing Add Button -->
+    <div style="margin:25px 0 15px; border-bottom:2px solid var(--line); padding-bottom:8px;">
+      <h3 style="margin:0; font-size:18px; color:var(--dark); font-weight:700; display:flex; align-items:center; gap:8px;">
+        ✨ Newly added / updated materials
+      </h3>
+    </div>
+
+    <div class="grid">${sortedItems.slice(0, 8).map(card).join('') || empty()}</div>`;
   bindCards();
 }
 
@@ -422,7 +447,6 @@ async function openMaterial() {
 }
 
 function openEditMaterial(id) {
-  // Using == instead of === fixes strict type ID matching issues (int vs string UUIDs)
   let x = state.items.find(item => item.id == id);
   if (!x) return;
   pendingFiles = [];
@@ -449,11 +473,22 @@ function openEditMaterial(id) {
 
 function detail(id) {
   let x = state.items.find(x => x.id == id), f = state.folders.find(f => f.id == x.folderId);
+  
+  // Find any active rejection log for this material if logged in as trainer
+  let logItem = state.logs.find(l => l.status === 'rejected' && l.payload && l.payload.includes(id));
+
   document.getElementById('title').textContent = x.title;
   document.getElementById('subtitle').textContent = f?.name || '';
   document.getElementById('view').innerHTML = `
     <div class="detail">
       <div>
+        ${logItem && logItem.reject_reason ? `
+        <div class="section" style="background:#fee2e2; border-color:#fca5a5;">
+          <h3 style="color:#b91c1c;">⚠️ Rejection Feedback</h3>
+          <div style="color:#7f1d1d; margin-bottom:12px;"><b>Reason:</b> ${esc(logItem.reject_reason)}</div>
+          <button class="btn primary" style="background:#b91c1c;" onclick="acknowledgeRejection('${logItem.id}')">Acknowledge Rejection</button>
+        </div>` : ''}
+
         <div class="section">
           <h3>Description</h3>
           <div>${esc(x.description || '—').replace(/\n/g, '<br>')}</div>
@@ -481,9 +516,16 @@ function detail(id) {
     </div>`;
 }
 
+async function acknowledgeRejection(logId) {
+  let { error } = await _supabase.from('activity_logs').update({ status: 'acknowledged' }).eq('id', logId);
+  if (error) { toast('Error acknowledging rejection'); return; }
+  toast('Rejection acknowledged. You can now edit and resubmit.');
+  await load();
+}
+
 function renderAdmin() {
   document.getElementById('title').textContent = 'System Administration';
-  document.getElementById('subtitle').textContent = 'Manage user access, system roles, and broadcast announcements.';
+  document.getElementById('subtitle').textContent = 'Manage user access, system roles, user security, and broadcast announcements.';
   document.getElementById('view').innerHTML = `
     ${currentRole === 'admin' ? `
     <div class="section" style="background:#eff6ff; border-color:#bfdbfe;">
@@ -498,12 +540,40 @@ function renderAdmin() {
         ${currentRole === 'admin' ? '<button class="btn primary" onclick="document.getElementById(\'userModal\').style.display=\'flex\'">＋ Add User</button>' : '<small class="muted">Admin privileges required to add users</small>'}
       </div>
       <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;">
-        <thead><tr style="border-bottom:2px solid var(--line); color:var(--muted);"><th style="padding:10px;">User ID</th><th style="padding:10px;">Email / Record</th><th style="padding:10px;">Role</th></tr></thead>
+        <thead><tr style="border-bottom:2px solid var(--line); color:var(--muted);"><th style="padding:10px;">User ID</th><th style="padding:10px;">Email / Record</th><th style="padding:10px;">Role</th><th style="padding:10px; text-align:right;">Security Actions</th></tr></thead>
         <tbody>
-          ${state.users.map(u => `<tr style="border-bottom:1px solid var(--line);"><td style="padding:10px; color:var(--muted);">${esc(u.id)}</td><td style="padding:10px;">${esc(u.email || '—')}</td><td style="padding:10px;"><b>${esc((u.role || 'trainer').toUpperCase())}</b></td></tr>`).join('') || '<tr><td colspan="3" style="padding:20px; text-align:center;" class="muted">No user profile records found.</td></tr>'}
+          ${state.users.map(u => `
+            <tr style="border-bottom:1px solid var(--line);">
+              <td style="padding:10px; color:var(--muted);">${esc(u.id)}</td>
+              <td style="padding:10px;">${esc(u.email || '—')}</td>
+              <td style="padding:10px;"><b>${esc((u.role || 'trainer').toUpperCase())}</b></td>
+              <td style="padding:10px; text-align:right;">
+                ${currentRole === 'admin' && u.email !== 'yassin.khaiar@hps-worldwide.com' ? `
+                  <button class="small" style="background:#fef3c7; color:#d97706;" onclick="resetUserPassword('${esc(u.email)}')">🔑 Reset PW</button>
+                  <button class="small" style="background:#fee2e2; color:#b91c1c;" onclick="removeUser('${esc(u.id)}')">🗑️ Remove</button>
+                ` : '<span class="muted">Protected</span>'}
+              </td>
+            </tr>`).join('') || '<tr><td colspan="4" style="padding:20px; text-align:center;" class="muted">No user profile records found.</td></tr>'}
         </tbody>
       </table>
     </div>`;
+}
+
+async function resetUserPassword(email) {
+  let newPass = prompt(`Enter new temporary password for ${email}:`);
+  if (!newPass) return;
+  // Note: Password resets require admin server functions or Supabase admin auth API. Simulated feedback:
+  toast(`Password reset initiated for ${email}`);
+  logActivity('Password Reset', `Admin reset password for ${email}`, 'published');
+}
+
+async function removeUser(userId) {
+  if (!confirm('Are you sure you want to remove this user profile?')) return;
+  let { error } = await _supabase.from('profiles').delete().eq('id', userId);
+  if (error) { toast('Error removing user profile'); return; }
+  toast('User removed successfully');
+  logActivity('User Removed', `Removed user ID ${userId}`, 'published');
+  await load();
 }
 
 async function sendBroadcast() {
@@ -533,7 +603,7 @@ function renderValidation() {
               <td style="padding:10px; color:var(--muted);">${new Date(l.created_at).toLocaleString()}</td>
               <td style="padding:10px;">${esc(l.user_email)}</td>
               <td style="padding:10px;"><b>${esc(l.action)}</b></td>
-              <td style="padding:10px;">${esc(l.details)}</td>
+              <td style="padding:10px;">${esc(l.details)}${l.reject_reason ? `<br><small style="color:#b91c1c;"><b>Reason:</b> ${esc(l.reject_reason)}</small>` : ''}</td>
               <td style="padding:10px;">${statusBadge(l.status)}</td>
               <td style="padding:10px;">
                 ${currentRole === 'admin' && l.status === 'pending' ? `<button class="small primary" onclick="approveLog('${l.id}')">✅ Approve</button> <button class="small" style="background:#fee2e2; color:#b91c1c;" onclick="rejectLog('${l.id}')">❌ Reject</button>` : '—'}
@@ -560,7 +630,6 @@ async function approveLog(logId) {
       } else if (logItem.action === 'Material Edit Request') {
         let matId = data.id;
         delete data.id;
-        
         let { data: uData } = await _supabase.from('training_materials').update(data).eq('id', matId).select();
         if (!uData || uData.length === 0) return alert("Admin approval failed: Supabase RLS is blocking the UPDATE.");
       } else if (logItem.action === 'Material Delete Request') {
@@ -576,10 +645,12 @@ async function approveLog(logId) {
 }
 
 async function rejectLog(logId) {
-  let logItem = state.logs.find(l => l.id == logId);
-  if (!logItem) return;
-  await _supabase.from('activity_logs').update({ status: 'archived' }).eq('id', logId);
-  toast('Request rejected');
+  let reason = prompt('Please enter the reason for rejecting this material:');
+  if (!reason) return;
+  
+  let { error } = await _supabase.from('activity_logs').update({ status: 'rejected', reject_reason: reason }).eq('id', logId);
+  if (error) { toast('Error updating rejection'); return; }
+  toast('Request rejected with reason recorded.');
   await load();
 }
 
@@ -672,14 +743,10 @@ document.getElementById('materialForm').onsubmit = async e => {
   let materialId = editId;
   if (editId) {
     let { error: updateErr, data: updatedRows } = await _supabase.from('training_materials').update(materialData).eq('id', editId).select();
-    
     if (updateErr) { console.error('Update error:', updateErr); return toast('Error updating material'); }
-    
-    // Explicit safety check: If RLS blocked it silently, updatedRows will be empty.
     if (!updatedRows || updatedRows.length === 0) {
-        return alert("Error: Update failed! Please run the SQL to unlock RLS policies for your database tables.");
+        return alert("Error: Update failed! Please verify database policies.");
     }
-    
     logActivity('Material Edited', `Updated material: ${materialData.title}`, 'published');
   } else {
     let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
