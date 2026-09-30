@@ -1,76 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HPS TrainingHub — Online Library</title>
-<!-- Supabase JavaScript Library -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#687386;--line:#e3e8f0;--blue:#315efb;--soft:#eef2ff;--dark:#111827}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Segoe UI,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{background:var(--dark);color:#dbe3f1;padding:20px 15px;display:flex;flex-direction:column;justify-content:space-between}.brand{font-size:21px;font-weight:800;padding:5px 10px 24px}.brand i{color:#8da6ff;font-style:normal}.nav button{display:block;width:100%;text-align:left;background:none;color:#b9c4d7;padding:11px;border-radius:9px;margin:4px 0}.nav button:hover,.nav button.on{background:#202b42;color:white}.user-box{padding:10px;background:#1e293b;border-radius:8px;font-size:12px;margin-bottom:10px;word-break:break-all}.user-box b{display:block;color:#93c5fd;margin-top:2px}.hint{color:#8d9ab0;font-size:11px;line-height:1.6;margin-top:15px}.main{min-width:0}.top{height:70px;background:white;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;padding:0 25px;position:sticky;top:0;z-index:5}.search{flex:1;position:relative}.search input{width:100%;padding:11px 14px 11px 36px;border:1px solid var(--line);border-radius:9px;background:#fafbfe;outline:0}.search span{position:absolute;left:13px;top:10px;color:#8792a5;font-size:18px}.btn{padding:10px 13px;border-radius:8px;background:#eef1f6;font-weight:600;color:#2a3447}.primary{background:var(--blue);color:white}.content{padding:27px;max-width:1500px;margin:auto}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.head h1{margin:0;font-size:27px}.head p{margin:5px 0;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.stat,.box,.card,.folder{background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 25px rgba(25,38,65,.06)}.stat{padding:17px}.stat small{color:var(--muted)}.stat b{display:block;font-size:24px;margin-top:5px}.toolbar{display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap}.toolbar select{padding:9px;border:1px solid var(--line);border-radius:8px;background:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:15px}.card{padding:16px}.icon{font-size:26px}.card h3{margin:10px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.muted{color:var(--muted);font-size:12px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.tag{background:#f0f3f8;padding:4px 7px;border-radius:20px;font-size:11px}.actions{display:flex;gap:7px;margin-top:14px}.small{background:#f1f3f7;border-radius:7px;padding:7px 9px;font-size:12px}.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.folder{padding:18px;cursor:pointer}.folder:hover{border-color:#a8b7ed}.folder b{font-size:15px}.folder small{display:block;color:var(--muted);margin-top:7px}.empty{text-align:center;padding:60px;background:white;border:1px dashed #cbd4e3;border-radius:12px;color:var(--muted)}.modalbg{display:none;position:fixed;inset:0;background:#0f172a88;z-index:20;align-items:center;justify-content:center;padding:20px}.modal{background:white;border-radius:14px;width:min(760px,100%);max-height:92vh;overflow:auto;padding:23px}.modal h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin:9px 0}.field.full{grid-column:1/-1}.field label{display:block;font-weight:700;font-size:12px;margin-bottom:5px;color:#566176}.field input,.field select,.field textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px}.field textarea{min-height:80px;resize:vertical}.filebox{border:2px dashed #cdd5e4;border-radius:9px;padding:18px;text-align:center;color:var(--muted);cursor:pointer}.files{margin-top:9px;font-size:12px}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.close{float:right;background:none;font-size:22px;color:#6b7280}.detail{display:grid;grid-template-columns:2fr 1fr;gap:18px}.section{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}.section h3{margin:0 0 11px}.kv{display:grid;grid-template-columns:180px 1fr;gap:9px;padding:7px 0;border-bottom:1px solid #eef1f5}.kv:last-child{border:0}.kv b{font-size:12px;color:#59667b}.resource{padding:10px;border:1px solid var(--line);border-radius:8px;margin:7px 0;display:flex;justify-content:space-between;gap:10px}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#172033;color:white;padding:11px 15px;border-radius:8px;z-index:30}
-@media(max-width:850px){.app{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.detail,.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.top{padding:0 12px}.content{padding:17px}}
-</style>
-</head>
-<body>
-
-<!-- Login Modal (Shown if user is not authenticated) -->
-<div class="modalbg" id="loginModal" style="display:flex;">
-  <div class="modal" style="width:min(400px,100%);">
-    <h2>🔐 HPS TrainingHub Login</h2>
-    <p class="muted">Enter your credentials to access the secure training cloud.</p>
-    <form id="loginForm">
-      <div class="field full"><label>Email address</label><input type="email" id="loginEmail" required placeholder="name@example.com"></div>
-      <div class="field full"><label>Password</label><input type="password" id="loginPassword" required placeholder="••••••••••••"></div>
-      <div class="modalfoot" style="margin-top:20px;">
-        <button type="submit" class="btn primary" style="width:100%;">Sign In</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="app">
-<aside class="side">
-  <div>
-    <div class="brand">Training<i>Hub</i></div>
-    <div class="nav">
-      <button class="on" data-nav="dashboard">⌂ &nbsp; Dashboard</button>
-      <button data-nav="folders">▰ &nbsp; Training folders</button>
-      <button data-nav="materials">▣ &nbsp; All materials</button>
-      <button data-nav="favorites">★ &nbsp; Favorites</button>
-    </div>
-  </div>
-  <div>
-    <div class="user-box">Logged in as:<b id="userEmailDisplay">—</b>Role: <b id="userRoleDisplay">—</b></div>
-    <button class="btn" style="width:100%; background:#334155; color:white;" onclick="logout()">Sign Out</button>
-    <div class="hint">ONLINE LIBRARY<br>Connected to Supabase Cloud Database.</div>
-  </div>
-</aside>
-<main class="main">
-<header class="top"><div class="search"><span>⌕</span><input id="search" placeholder="Search materials, keywords, PowerCARD versions…"></div><button class="btn" id="folderBtn">＋ Folder</button><button class="btn primary" id="materialBtn">＋ Material</button></header>
-<section class="content"><div class="head"><div><h1 id="title">Training Dashboard</h1><p id="subtitle">Organize complete training courses and resources online.</p></div></div><div id="view"></div></section>
-</main></div>
-
-<div class="modalbg" id="folderModal"><div class="modal"><button class="close" onclick="closeM('folderModal')">×</button><h2>Create training folder</h2><div class="field"><label>Folder name</label><input id="folderName" placeholder="e.g. PowerCARD Issuer"></div><div class="modalfoot"><button class="btn" onclick="closeM('folderModal')">Cancel</button><button class="btn primary" id="createFolder">Create</button></div></div></div>
-
-<div class="modalbg" id="materialModal"><div class="modal"><button class="close" onclick="closeM('materialModal')">×</button><h2 id="materialTitle">Add training material</h2>
-<form id="materialForm"><div class="formgrid">
-<div class="field"><label>Material / section title *</label><input id="mTitle" required placeholder="e.g. PowerCARD Issuer — Payment Instruments"></div>
-<div class="field"><label>Training folder *</label><select id="mFolder" required></select></div>
-<div class="field full"><label>Description</label><textarea id="mDesc" placeholder="What should the trainer/learner know after this section?"></textarea></div>
-<div class="field"><label>Keywords</label><input id="mKeywords" placeholder="issuer, debit card, authorization"></div>
-<div class="field"><label>Estimated training time</label><input id="mTime" placeholder="e.g. 45 min / 2h"></div>
-<div class="field"><label>PowerCARD Version</label><select id="mVersion"><option value="">Not specified</option><option>3.2.3</option><option>3.4</option><option>3.5</option><option>4</option><option>Other</option></select></div>
-<div class="field"><label>Assessment method</label><input id="mAssessment" placeholder="Quiz, practical, observation, case study…"></div>
-<div class="field full"><label>eAcademy link — EN</label><input id="mEn" type="url" placeholder="https://…"></div>
-<div class="field full"><label>eAcademy link — FR</label><input id="mFr" type="url" placeholder="https://…"></div>
-<div class="field"><label>Dataset / Simulation</label><input id="mDataset" placeholder="Dataset name, path or notes"></div>
-<div class="field"><label>One-pager / Mindmap</label><input id="mOne" placeholder="Description or file link"></div>
-<div class="field full"><label>Files — PDF, Word, PowerPoint, Excel, video, audio, images, ZIP, etc.</label>
-<div class="filebox" id="fileBox">Click here to select one or multiple files<br><small>Files are ready for cloud storage upload.</small></div><input id="files" type="file" multiple hidden><div class="files" id="fileList"></div></div>
-</div><div class="modalfoot"><button type="button" class="btn" onclick="closeM('materialModal')">Cancel</button><button class="btn primary">Save material</button></div></form>
-</div></div>
-<div class="toast" id="toast"></div>
-
 <script>
 // Initialize Supabase Client
 const SUPABASE_URL = 'https://xdcjdpyuvalqpivduhsf.supabase.co';
@@ -96,9 +23,10 @@ async function checkAuth() {
   currentUser = session.user;
   document.getElementById('userEmailDisplay').textContent = currentUser.email;
   
-  let { data: profile } = await _supabase.from('profiles').select('role').eq('id', currentUser.id).single();
-  if (profile) {
-    currentRole = profile.role;
+  // Safely fetch user role without 406 error
+  let { data: profile } = await _supabase.from('profiles').select('role').eq('id', currentUser.id).limit(1);
+  if (profile && profile.length > 0) {
+    currentRole = profile[0].role;
   }
   document.getElementById('userRoleDisplay').textContent = currentRole.toUpperCase();
   
@@ -145,25 +73,32 @@ async function load() {
     }
     state.folders = folders || [];
 
-    let { data: materials, error: mErr } = await _supabase.from('training_materials').select('*, material_files(*)');
+    // Fetch materials and files separately to ensure robust compatibility
+    let { data: materials, error: mErr } = await _supabase.from('training_materials').select('*');
     if (mErr) throw mErr;
 
-    state.items = (materials || []).map(m => ({
-      id: m.id,
-      title: m.title,
-      folderId: m.folder_id,
-      description: m.description,
-      keywords: m.keywords || '',
-      time: m.time || '',
-      version: m.current_version || '',
-      assessment: m.assessment || '',
-      en: m.en_link || '',
-      fr: m.fr_link || '',
-      dataset: m.dataset || '',
-      onepager: m.onepager || '',
-      favorite: m.favorite || false,
-      files: (m.material_files || []).map(f => ({ name: f.file_name, path: f.file_path, size: f.file_size || 0 }))
-    }));
+    let { data: files, error: fileErr } = await _supabase.from('material_files').select('*');
+    if (fileErr) console.warn('Files fetch warning:', fileErr);
+
+    state.items = (materials || []).map(m => {
+      let mFiles = (files || []).filter(f => f.material_id === m.id);
+      return {
+        id: m.id,
+        title: m.title,
+        folderId: m.folder_id,
+        description: m.description,
+        keywords: m.keywords || '',
+        time: m.time || '',
+        version: m.current_version || '',
+        assessment: m.assessment || '',
+        en: m.en_link || '',
+        fr: m.fr_link || '',
+        dataset: m.dataset || '',
+        onepager: m.onepager || '',
+        favorite: m.favorite || false,
+        files: mFiles.map(f => ({ id: f.id, name: f.file_name, path: f.file_path, size: f.file_size || 0 }))
+      };
+    });
 
     render();
   } catch (err) {
@@ -203,7 +138,6 @@ function renderDashboard() {
   bindCards();
 }
 
-// Updated renderFolders function with Edit and Delete buttons
 function renderFolders(){
   document.getElementById('view').innerHTML = `
     <div class="folders">
@@ -213,40 +147,24 @@ function renderFolders(){
           <small>${state.items.filter(x => x.folderId == f.id).length} section(s)</small>
           <div style="position:absolute; top:12px; right:12px; display:flex; gap:5px;">
             <button class="small" onclick="event.stopPropagation(); editFolder('${f.id}', '${esc(f.name)}')">✏️ Edit</button>
-            <button class="small" onclick="event.stopPropagation(); deleteFolder('${f.id}', '${esc(f.name)}')">🗑️</button>
+            <button class="small" onclick="event.stopPropagation(); deleteFolder('${f.id}', '${esc(f.name)}')">🗑️️</button>
           </div>
         </div>
       `).join('')}
     </div>`;
 }
 
-// Edit Folder Function
 async function editFolder(id, currentName) {
   let newName = prompt('Edit folder name:', currentName);
   if (!newName || !newName.trim()) return;
-  
   let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
-  if (error) {
-    console.error(error);
-    toast('Error updating folder');
-  } else {
-    toast('Folder updated');
-    await load();
-  }
+  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); await load(); }
 }
 
-// Delete Folder Function
 async function deleteFolder(id, name) {
-  if (!confirm(`Delete folder "${name}"? Materials inside will be unassigned from this folder.`)) return;
-
+  if (!confirm(`Delete folder "${name}"? Materials inside will be unassigned.`)) return;
   let { error } = await _supabase.from('folders').delete().eq('id', id);
-  if (error) {
-    console.error(error);
-    toast('Error deleting folder');
-  } else {
-    toast('Folder deleted');
-    await load();
-  }
+  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); await load(); }
 }
 
 function renderItems() {
@@ -343,14 +261,10 @@ function detail(id) {
 
 async function downloadCloudFile(filePath) {
   const { data, error } = _supabase.storage.from('training-files').getPublicUrl(filePath);
-  if (error) {
-    toast('Could not retrieve file URL');
-    return;
-  }
+  if (error) { toast('Could not retrieve file URL'); return; }
   window.open(data.publicUrl, '_blank');
 }
 
-// Navigation and Modal event listeners
 document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => { nav = b.dataset.nav; folder = null; render(); });
 document.getElementById('search').oninput = e => { search = e.target.value; render(); };
 document.getElementById('folderBtn').onclick = () => document.getElementById('folderModal').style.display = 'flex';
@@ -373,7 +287,6 @@ document.getElementById('files').onchange = e => {
   document.getElementById('fileList').innerHTML = pendingFiles.map(f => `📎 ${esc(f.name)} — ${fmtBytes(f.size)}`).join('<br>');
 };
 
-// Save Material & Upload Files to Supabase Storage
 document.getElementById('materialForm').onsubmit = async e => {
   e.preventDefault();
   toast('Saving material and uploading files...');
@@ -381,15 +294,15 @@ document.getElementById('materialForm').onsubmit = async e => {
   let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([{
     title: document.getElementById('mTitle').value.trim(),
     folder_id: document.getElementById('mFolder').value,
-    description: document.getElementById('mDesc').value,
-    keywords: document.getElementById('mKeywords').value,
-    time: document.getElementById('mTime').value,
+    description: document.getElementById('mDesc'].value,
+    keywords: document.getElementById('mKeywords'].value,
+    time: document.getElementById('mTime'].value,
     current_version: document.getElementById('mVersion').value,
     assessment: document.getElementById('mAssessment').value,
-    en_link: document.getElementById('mEn').value,
-    fr_link: document.getElementById('mFr').value,
-    dataset: document.getElementById('mDataset').value,
-    onepager: document.getElementById('mOne').value,
+    en_link: document.getElementById('mEn'].value,
+    fr_link: document.getElementById('mFr'].value,
+    dataset: document.getElementById('mDataset'].value,
+    onepager: document.getElementById('mOne'].value,
     status: 'published'
   }]).select().single();
 
@@ -419,7 +332,5 @@ document.getElementById('materialForm').onsubmit = async e => {
   toast('Training section saved to cloud!');
 };
 
-// Run authentication check on application startup
 checkAuth();
 </script>
-</body></html>
