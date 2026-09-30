@@ -90,15 +90,15 @@
 <div class="formgrid">
 <div class="field"><label>Material / section title *</label><input id="mTitle" required placeholder="e.g. PowerCARD Issuer — Payment Instruments"></div>
 <div class="field"><label>Training folder *</label><select id="mFolder" required></select></div>
-<div class="field full"><label>Description</label><textarea id="mDesc" placeholder="What should the trainer/learner know after this section?"></textarea></div>
+<div class="field full"><label>Description *</label><textarea id="mDesc" required placeholder="What should the trainer/learner know after this section?"></textarea></div>
 <div class="field"><label>Keywords</label><input id="mKeywords" placeholder="issuer, debit card, authorization"></div>
-<div class="field"><label>Estimated training time</label><input id="mTime" placeholder="e.g. 45 min / 2h"></div>
-<div class="field"><label>PowerCARD Version</label><select id="mVersion"><option value="">Not specified</option><option>3.2.3</option><option>3.4</option><option>3.5</option><option>4</option><option>Other</option></select></div>
+<div class="field"><label>Estimated training time *</label><input id="mTime" required placeholder="e.g. 45 min / 2h"></div>
+<div class="field"><label>PowerCARD Version *</label><select id="mVersion" required><option value="">Not specified</option><option>3.2.3</option><option>3.4</option><option>3.5</option><option>4</option><option>Other</option></select></div>
 <div class="field"><label>Assessment method</label><input id="mAssessment" placeholder="Quiz, practical, observation, case study…"></div>
-<div class="field full"><label>eAcademy link — EN</label><input id="mEn" type="url" placeholder="https://…"></div>
-<div class="field full"><label>eAcademy link — FR</label><input id="mFr" type="url" placeholder="https://…"></div>
-<div class="field"><label>Dataset / Simulation link</label><input id="mDataset" type="url" placeholder="https://…"></div>
-<div class="field"><label>One-pager / Mindmap link</label><input id="mOne" type="url" placeholder="https://…"></div>
+<div class="field full"><label>eAcademy link — EN (Optional)</label><input id="mEn" type="url" placeholder="https://…"></div>
+<div class="field full"><label>eAcademy link — FR (Optional)</label><input id="mFr" type="url" placeholder="https://…"></div>
+<div class="field"><label>Dataset / Simulation link (Optional)</label><input id="mDataset" type="url" placeholder="https://…"></div>
+<div class="field"><label>One-pager / Mindmap link (Optional)</label><input id="mOne" type="url" placeholder="https://…"></div>
 <div class="field full"><label>Files — PDF, Word, PowerPoint, Excel, video, audio, images, ZIP, etc.</label>
 <div class="filebox" id="fileBox">Click here to select one or multiple files<br><small>Files are ready for cloud storage upload.</small></div><input id="files" type="file" multiple hidden><div class="files" id="fileList"></div></div>
 </div><div class="modalfoot"><button type="button" class="btn" onclick="closeM('materialModal')">Cancel</button><button class="btn primary" id="saveMaterialBtn">Save material</button></div></form>
@@ -466,11 +466,11 @@ function detail(id) {
           <div class="kv"><b>Keywords</b><span>${esc(x.keywords || '—')}</span></div>
           <div class="kv"><b>Estimated time</b><span>${esc(x.time || '—')}</span></div>
           <div class="kv"><b>PowerCARD Version</b><span>${esc(x.version || '—')}</span></div>
-          <div class="kv"><b>Assessment</b><span>${esc(x.assessment || '—')}</span></div>
-          <div class="kv"><b>Dataset / Sim</b><span>${x.dataset ? `<a class="small" href="${esc(x.dataset)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 Open Dataset</a>` : '—'}</span></div>
-          <div class="kv"><b>One-pager</b><span>${x.onepager ? `<a class="small" href="${esc(x.onepager)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 Open One-pager</a>` : '—'}</span></div>
-          <div class="kv"><b>eAcademy EN</b><span>${x.en ? `<a class="small" href="${esc(x.en)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 EN Course</a>` : '—'}</span></div>
-          <div class="kv"><b>eAcademy FR</b><span>${x.fr ? `<a class="small" href="${esc(x.fr)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 FR Course</a>` : '—'}</span></div>
+          ${x.assessment ? `<div class="kv"><b>Assessment</b><span>${esc(x.assessment)}</span></div>` : ''}
+          ${x.dataset ? `<div class="kv"><b>Dataset / Sim</b><span><a class="small" href="${esc(x.dataset)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 Open Dataset</a></span></div>` : ''}
+          ${x.onepager ? `<div class="kv"><b>One-pager</b><span><a class="small" href="${esc(x.onepager)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 Open One-pager</a></span></div>` : ''}
+          ${x.en ? `<div class="kv"><b>eAcademy EN</b><span><a class="small" href="${esc(x.en)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 EN Course</a></span></div>` : ''}
+          ${x.fr ? `<div class="kv"><b>eAcademy FR</b><span><a class="small" href="${esc(x.fr)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 FR Course</a></span></div>` : ''}
         </div>
         <button class="btn" onclick="render()">← Back</button>
       </div>
@@ -554,7 +554,9 @@ async function approveLog(logId) {
       if (logItem.action === 'Material Create Request') {
         await _supabase.from('training_materials').insert([data]);
       } else if (logItem.action === 'Material Edit Request') {
-        await _supabase.from('training_materials').update(data).eq('id', data.id);
+        let matId = data.id;
+        delete data.id;
+        await _supabase.from('training_materials').update(data).eq('id', matId);
       } else if (logItem.action === 'Material Delete Request') {
         await _supabase.from('training_materials').delete().eq('id', data.id);
       } else if (logItem.action === 'Folder Create Request') {
