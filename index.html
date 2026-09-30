@@ -324,8 +324,8 @@ function detail(id) {
           <div class="kv"><b>Assessment</b><span>${esc(x.assessment || '—')}</span></div>
           <div class="kv"><b>Dataset / Simulation</b><span>${esc(x.dataset || '—')}</span></div>
           <div class="kv"><b>One-pager / Mindmap</b><span>${esc(x.onepager || '—')}</span></div>
-          <div class="kv"><b>eAcademy EN</b><span>${x.en ? `<a href="${esc(x.en)}" target="_blank">Open EN</a>` : '—'}</span></div>
-          <div class="kv"><b>eAcademy FR</b><span>${x.fr ? `<a href="${esc(x.fr)}" target="_blank">Open FR</a>` : '—'}</span></div>
+          <div class="kv"><b>eAcademy EN</b><span>${x.en ? `<a class="small" href="${esc(x.en)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:4px 10px; border-radius:6px; font-weight:600;">🔗 Open EN Link</a>` : '—'}</span></div>
+          <div class="kv"><b>eAcademy FR</b><span>${x.fr ? `<a class="small" href="${esc(x.fr)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:4px 10px; border-radius:6px; font-weight:600;">🔗 Open FR Link</a>` : '—'}</span></div>
         </div>
         <button class="btn" onclick="render()">← Back</button>
       </div>
