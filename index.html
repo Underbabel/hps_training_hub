@@ -209,7 +209,6 @@ function renderDashboard() {
   bindCards();
 }
 
-// Updated renderFolders function with Edit and Delete buttons
 function renderFolders(){
   document.getElementById('view').innerHTML = `
     <div class="folders">
@@ -226,33 +225,17 @@ function renderFolders(){
     </div>`;
 }
 
-// Edit Folder Function
 async function editFolder(id, currentName) {
   let newName = prompt('Edit folder name:', currentName);
   if (!newName || !newName.trim()) return;
-  
   let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
-  if (error) {
-    console.error(error);
-    toast('Error updating folder');
-  } else {
-    toast('Folder updated');
-    await load();
-  }
+  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); await load(); }
 }
 
-// Delete Folder Function
 async function deleteFolder(id, name) {
-  if (!confirm(`Delete folder "${name}"? Materials inside will be unassigned from this folder.`)) return;
-
+  if (!confirm(`Delete folder "${name}"? Materials inside will be unassigned.`)) return;
   let { error } = await _supabase.from('folders').delete().eq('id', id);
-  if (error) {
-    console.error(error);
-    toast('Error deleting folder');
-  } else {
-    toast('Folder deleted');
-    await load();
-  }
+  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); await load(); }
 }
 
 function renderItems() {
@@ -349,14 +332,10 @@ function detail(id) {
 
 async function downloadCloudFile(filePath) {
   const { data, error } = _supabase.storage.from('training-files').getPublicUrl(filePath);
-  if (error) {
-    toast('Could not retrieve file URL');
-    return;
-  }
+  if (error) { toast('Could not retrieve file URL'); return; }
   window.open(data.publicUrl, '_blank');
 }
 
-// Navigation and Modal event listeners
 document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => { nav = b.dataset.nav; folder = null; render(); });
 document.getElementById('search').oninput = e => { search = e.target.value; render(); };
 document.getElementById('folderBtn').onclick = () => document.getElementById('folderModal').style.display = 'flex';
@@ -379,7 +358,6 @@ document.getElementById('files').onchange = e => {
   document.getElementById('fileList').innerHTML = pendingFiles.map(f => `📎 ${esc(f.name)} — ${fmtBytes(f.size)}`).join('<br>');
 };
 
-// Save Material & Upload Files to Supabase Storage
 document.getElementById('materialForm').onsubmit = async e => {
   e.preventDefault();
   toast('Saving material and uploading files...');
@@ -400,7 +378,7 @@ document.getElementById('materialForm').onsubmit = async e => {
   }]).select().single();
 
   if (matErr) {
-    console.error(matErr);
+    console.error('Material save error:', matErr);
     return toast('Error saving training material');
   }
 
@@ -408,15 +386,22 @@ document.getElementById('materialForm').onsubmit = async e => {
 
   for (let file of pendingFiles) {
     let filePath = `materials/${materialId}/${Date.now()}_${file.name}`;
-    let { error: uploadErr } = await _supabase.storage.from('training-files').upload(filePath, file);
+    console.log('Uploading file to bucket:', filePath);
 
-    if (!uploadErr) {
-      await _supabase.from('material_files').insert([{
+    let { data: uploadData, error: uploadErr } = await _supabase.storage.from('training-files').upload(filePath, file);
+
+    if (uploadErr) {
+      console.error('Storage upload failed:', uploadErr);
+    } else {
+      console.log('Storage upload success:', uploadData);
+      let { error: fileDbErr } = await _supabase.from('material_files').insert([{
         material_id: materialId,
         file_name: file.name,
         file_path: filePath,
         file_size: file.size
       }]);
+      if (fileDbErr) console.error('File DB record error:', fileDbErr);
+      else console.log('File successfully linked in DB!');
     }
   }
 
@@ -425,7 +410,6 @@ document.getElementById('materialForm').onsubmit = async e => {
   toast('Training section saved to cloud!');
 };
 
-// Run authentication check on application startup
 checkAuth();
 </script>
 </body></html>
