@@ -30,8 +30,8 @@
     <h2>🔐 HPS TrainingHub Login</h2>
     <p class="muted">Enter your credentials to access the secure training cloud.</p>
     <form id="loginForm">
-      <div class="field full"><label>Email address</label><input type="email" id="loginEmail" required placeholder="name@example.com"></div>
-      <div class="field full"><label>Password</label><input type="password" id="loginPassword" required placeholder="••••••••••••"></div>
+      <div class="field full"><label>Email address</label><input type="email" id="loginEmail" autocomplete="email" required placeholder="name@example.com"></div>
+      <div class="field full"><label>Password</label><input type="password" id="loginPassword" autocomplete="current-password" required placeholder="••••••••••••"></div>
       <div class="modalfoot" style="margin-top:20px;">
         <button type="submit" class="btn primary" style="width:100%;">Sign In</button>
       </div>
@@ -107,8 +107,8 @@
 <!-- Add User Modal (Admin) -->
 <div class="modalbg" id="userModal"><div class="modal" style="width:min(450px,100%);"><button class="close" onclick="closeM('userModal')">×</button><h2>Add New User</h2>
 <form id="userForm">
-<div class="field full"><label>Email address</label><input type="email" id="newUserEmail" required placeholder="user@hps-worldwide.com"></div>
-<div class="field full"><label>Temporary Password</label><input type="password" id="newUserPass" required placeholder="••••••••"></div>
+<div class="field full"><label>Email address</label><input type="email" id="newUserEmail" autocomplete="email" required placeholder="user@hps-worldwide.com"></div>
+<div class="field full"><label>Temporary Password</label><input type="password" id="newUserPass" autocomplete="new-password" required placeholder="••••••••"></div>
 <div class="field full"><label>System Role</label><select id="newUserRole"><option value="trainer">Trainer</option><option value="admin">Admin</option></select></div>
 <div class="modalfoot"><button type="button" class="btn" onclick="closeM('userModal')">Cancel</button><button type="submit" class="btn primary">Create User</button></div>
 </form></div></div>
