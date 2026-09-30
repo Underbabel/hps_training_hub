@@ -203,8 +203,50 @@ function renderDashboard() {
   bindCards();
 }
 
-function renderFolders() {
-  document.getElementById('view').innerHTML = `<div class="folders">${state.folders.map(f => `<div class="folder" onclick="openFolder('${f.id}')"><b>▰ ${esc(f.name)}</b><small>${state.items.filter(x => x.folderId == f.id).length} section(s)</small></div>`).join('')}</div>`;
+// Updated renderFolders function with Edit and Delete buttons
+function renderFolders(){
+  document.getElementById('view').innerHTML = `
+    <div class="folders">
+      ${state.folders.map(f => `
+        <div class="folder" onclick="openFolder('${f.id}')" style="position:relative;">
+          <b>▰ ${esc(f.name)}</b>
+          <small>${state.items.filter(x => x.folderId == f.id).length} section(s)</small>
+          <div style="position:absolute; top:12px; right:12px; display:flex; gap:5px;">
+            <button class="small" onclick="event.stopPropagation(); editFolder('${f.id}', '${esc(f.name)}')">✏️ Edit</button>
+            <button class="small" onclick="event.stopPropagation(); deleteFolder('${f.id}', '${esc(f.name)}')">🗑️</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+// Edit Folder Function
+async function editFolder(id, currentName) {
+  let newName = prompt('Edit folder name:', currentName);
+  if (!newName || !newName.trim()) return;
+  
+  let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
+  if (error) {
+    console.error(error);
+    toast('Error updating folder');
+  } else {
+    toast('Folder updated');
+    await load();
+  }
+}
+
+// Delete Folder Function
+async function deleteFolder(id, name) {
+  if (!confirm(`Delete folder "${name}"? Materials inside will be unassigned from this folder.`)) return;
+
+  let { error } = await _supabase.from('folders').delete().eq('id', id);
+  if (error) {
+    console.error(error);
+    toast('Error deleting folder');
+  } else {
+    toast('Folder deleted');
+    await load();
+  }
 }
 
 function renderItems() {
