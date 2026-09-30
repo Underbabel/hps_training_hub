@@ -131,7 +131,7 @@ function fileIcon(n) { let e = n.split('.').pop().toLowerCase(); return ['mp4', 
 function fmtBytes(n) { if (!n) return ''; let u = ['B', 'KB', 'MB', 'GB']; let i = Math.floor(Math.log(n) / Math.log(1024)); return (n / 1024 ** i).toFixed(i ? 1 : 0) + ' ' + u[i] }
 
 function statusBadge(status) {
-  let s = (status || 'Approved').toLowerCase();
+  let s = (status || 'published').toLowerCase();
   if (s.includes('pending')) return '<span class="badge badge-pending">Pending Approval</span>';
   if (s.includes('reject')) return '<span class="badge badge-rejected">Rejected</span>';
   return '<span class="badge badge-approved">Approved</span>';
@@ -190,7 +190,7 @@ async function logout() {
   window.location.reload();
 }
 
-async function logActivity(action, details, status = 'Approved', payload = null) {
+async function logActivity(action, details, status = 'published', payload = null) {
   try {
     await _supabase.from('activity_logs').insert([{
       user_email: currentUser?.email || 'System',
@@ -240,7 +240,7 @@ async function load() {
         dataset: m.dataset || '',
         onepager: m.onepager || '',
         favorite: m.favorite || false,
-        status: m.status || 'Approved',
+        status: m.status || 'published',
         files: mFiles.map(f => ({ id: f.id, name: f.file_name, path: f.file_path, size: f.file_size || 0 }))
       };
     });
@@ -321,7 +321,7 @@ function renderFolders(){
           <div>
             <b>▰ ${esc(f.name)}</b>
             <small>${state.items.filter(x => x.folderId == f.id).length} section(s)</small>
-            <div style="margin-top:8px;">${statusBadge(f.status || 'Approved')}</div>
+            <div style="margin-top:8px;">${statusBadge(f.status || 'published')}</div>
           </div>
           <div style="display:flex; gap:6px; margin-top:14px; border-top:1px solid #f1f3f7; padding-top:10px;">
             <button class="small" onclick="event.stopPropagation(); editFolder('${f.id}', '${esc(f.name)}')">✏️ Edit</button>
@@ -336,19 +336,19 @@ async function editFolder(id, currentName) {
   let newName = prompt('Edit folder name:', currentName);
   if (!newName || !newName.trim()) return;
   if (currentRole === 'trainer') {
-    logActivity('Folder Edit Request', `Trainer requested renaming folder to ${newName}`, 'Pending Approval', { id, newName });
+    logActivity('Folder Edit Request', `Trainer requested renaming folder to ${newName}`, 'pending', { id, newName, status: 'published' });
     toast('⚠️ Folder edit submitted for admin approval!');
     return;
   }
   let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
-  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); logActivity('Folder Edited', `Folder renamed to ${newName}`); await load(); }
+  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); logActivity('Folder Edited', `Folder renamed to ${newName}`, 'published'); await load(); }
 }
 
 async function deleteFolder(id, name) {
   if (currentRole !== 'admin') return;
   if (!confirm(`Delete folder "${name}"?`)) return;
   let { error } = await _supabase.from('folders').delete().eq('id', id);
-  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); logActivity('Folder Deleted', `Folder ${name} removed`); await load(); }
+  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); logActivity('Folder Deleted', `Folder ${name} removed`, 'published'); await load(); }
 }
 
 function renderItems() {
@@ -401,7 +401,7 @@ function bindCards() {
     if (confirm('Delete this training section?')) {
       let x = state.items.find(x => x.id == b.dataset.del);
       await _supabase.from('training_materials').delete().eq('id', b.dataset.del);
-      logActivity('Material Deleted', `Deleted material: ${x?.title}`);
+      logActivity('Material Deleted', `Deleted material: ${x?.title}`, 'published');
       await load();
       toast('Deleted');
     }
@@ -532,7 +532,7 @@ function renderValidation() {
               <td style="padding:10px;">${esc(l.details)}</td>
               <td style="padding:10px;">${statusBadge(l.status)}</td>
               <td style="padding:10px;">
-                ${currentRole === 'admin' && l.status === 'Pending Approval' ? `<button class="small primary" onclick="approveLog('${l.id}')">✅ Approve</button> <button class="small" style="background:#fee2e2; color:#b91c1c;" onclick="rejectLog('${l.id}')">❌ Reject</button>` : '—'}
+                ${currentRole === 'admin' && l.status === 'pending' ? `<button class="small primary" onclick="approveLog('${l.id}')">✅ Approve</button> <button class="small" style="background:#fee2e2; color:#b91c1c;" onclick="rejectLog('${l.id}')">❌ Reject</button>` : '—'}
               </td>
             </tr>
           `).join('') || '<tr><td colspan="6" style="padding:20px; text-align:center;" class="muted">No validation logs found.</td></tr>'}
@@ -545,12 +545,12 @@ async function approveLog(logId) {
   let logItem = state.logs.find(l => l.id == logId);
   if (!logItem) return;
 
-  await _supabase.from('activity_logs').update({ status: 'Approved' }).eq('id', logId);
+  await _supabase.from('activity_logs').update({ status: 'published' }).eq('id', logId);
   
   if (logItem.payload) {
     try {
       let data = JSON.parse(logItem.payload);
-      data.status = 'Approved';
+      data.status = 'published';
       if (logItem.action === 'Material Create Request') {
         await _supabase.from('training_materials').insert([data]);
       } else if (logItem.action === 'Material Edit Request') {
@@ -560,7 +560,7 @@ async function approveLog(logId) {
       } else if (logItem.action === 'Material Delete Request') {
         await _supabase.from('training_materials').delete().eq('id', data.id);
       } else if (logItem.action === 'Folder Create Request') {
-        await _supabase.from('folders').insert([{ name: data.name, status: 'Approved' }]);
+        await _supabase.from('folders').insert([{ name: data.name, status: 'published' }]);
       }
     } catch(e) { console.error('Payload execution error:', e); }
   }
@@ -572,7 +572,7 @@ async function approveLog(logId) {
 async function rejectLog(logId) {
   let logItem = state.logs.find(l => l.id == logId);
   if (!logItem) return;
-  await _supabase.from('activity_logs').update({ status: 'Rejected' }).eq('id', logId);
+  await _supabase.from('activity_logs').update({ status: 'archived' }).eq('id', logId);
   toast('Request rejected');
   await load();
 }
@@ -590,12 +590,12 @@ document.getElementById('materialBtn').onclick = openMaterial;
 
 document.getElementById('createFolder').onclick = async () => {
   let n = document.getElementById('folderName').value.trim();
-  let status = currentRole === 'admin' ? 'Approved' : 'Pending Approval';
+  let status = currentRole === 'admin' ? 'published' : 'pending';
   if (!n) return;
   if (state.folders.some(f => f.name.toLowerCase() === n.toLowerCase())) return toast('Folder already exists');
   
   if (currentRole === 'trainer') {
-    logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'Pending Approval', { name: n, status });
+    logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'pending', { name: n, status });
     closeM('folderModal');
     toast('⚠ Folder creation submitted! Check Validation Log for status.');
     return;
@@ -604,7 +604,7 @@ document.getElementById('createFolder').onclick = async () => {
   let { error } = await _supabase.from('folders').insert([{ name: n, status }]);
   if (error) return toast('Error creating folder');
   closeM('folderModal');
-  logActivity('Folder Created', `Created folder ${n}`, 'Approved');
+  logActivity('Folder Created', `Created folder ${n}`, 'published');
   await load();
   toast('Folder created');
 };
@@ -623,7 +623,7 @@ document.getElementById('userForm').onsubmit = async e => {
   }
   closeM('userModal');
   toast('User created successfully!');
-  logActivity('User Created', `Created user ${email} with role ${role}`, 'Approved');
+  logActivity('User Created', `Created user ${email} with role ${role}`, 'published');
   await load();
 };
 
@@ -638,7 +638,7 @@ document.getElementById('materialForm').onsubmit = async e => {
   toast('Processing material request...');
 
   let editId = document.getElementById('mEditId').value;
-  let materialStatus = currentRole === 'admin' ? 'Approved' : 'Pending Approval';
+  let materialStatus = currentRole === 'admin' ? 'published' : 'pending';
   let materialData = {
     title: document.getElementById('mTitle').value.trim(),
     folder_id: document.getElementById('mFolder').value,
@@ -657,7 +657,7 @@ document.getElementById('materialForm').onsubmit = async e => {
   if (currentRole === 'trainer') {
     let actionType = editId ? 'Material Edit Request' : 'Material Create Request';
     if (editId) materialData.id = editId;
-    logActivity(actionType, `Trainer submitted material: ${materialData.title}`, 'Pending Approval', materialData);
+    logActivity(actionType, `Trainer submitted material: ${materialData.title}`, 'pending', materialData);
     closeM('materialModal');
     toast('⚠️ Submitted! Check Validation section for your approval status.');
     return;
@@ -667,12 +667,12 @@ document.getElementById('materialForm').onsubmit = async e => {
   if (editId) {
     let { error: updateErr } = await _supabase.from('training_materials').update(materialData).eq('id', editId);
     if (updateErr) { console.error('Update error:', updateErr); return toast('Error updating material'); }
-    logActivity('Material Edited', `Updated material: ${materialData.title}`, 'Approved');
+    logActivity('Material Edited', `Updated material: ${materialData.title}`, 'published');
   } else {
     let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
     if (matErr) { console.error('Material save error:', matErr); return toast('Error saving training material'); }
     materialId = matData.id;
-    logActivity('Material Created', `Created material: ${materialData.title}`, 'Approved');
+    logActivity('Material Created', `Created material: ${materialData.title}`, 'published');
   }
 
   for (let file of pendingFiles) {
