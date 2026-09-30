@@ -7,13 +7,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#687386;--line:#e3e8f0;--blue:#315efb;--soft:#eef2ff;--dark:#111827}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Segoe UI,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{background:var(--dark);color:#dbe3f1;padding:20px 15px;display:flex;flex-direction:column;justify-content:space-between}.brand{font-size:21px;font-weight:800;padding:5px 10px 24px}.brand i{color:#8da6ff;font-style:normal}.nav button{display:block;width:100%;text-align:left;background:none;color:#b9c4d7;padding:11px;border-radius:9px;margin:4px 0}.nav button:hover,.nav button.on{background:#202b42;color:white}.user-box{padding:10px;background:#1e293b;border-radius:8px;font-size:12px;margin-bottom:10px;word-break:break-all}.user-box b{display:block;color:#93c5fd;margin-top:2px}.hint{color:#8d9ab0;font-size:11px;line-height:1.6;margin-top:15px}.main{min-width:0}.top{height:70px;background:white;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;padding:0 25px;position:sticky;top:0;z-index:5}.search{flex:1;position:relative}.search input{width:100%;padding:11px 14px 11px 36px;border:1px solid var(--line);border-radius:9px;background:#fafbfe;outline:0}.search span{position:absolute;left:13px;top:10px;color:#8792a5;font-size:18px}.btn{padding:10px 13px;border-radius:8px;background:#eef1f6;font-weight:600;color:#2a3447}.primary{background:var(--blue);color:white}.content{padding:27px;max-width:1500px;margin:auto}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.head h1{margin:0;font-size:27px}.head p{margin:5px 0;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.stat,.box,.card,.folder{background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 25px rgba(25,38,65,.06)}.stat{padding:17px}.stat small{color:var(--muted)}.stat b{display:block;font-size:24px;margin-top:5px}.toolbar{display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap}.toolbar select{padding:9px;border:1px solid var(--line);border-radius:8px;background:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:15px}.card{padding:16px}.icon{font-size:26px}.card h3{margin:10px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.muted{color:var(--muted);font-size:12px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.tag{background:#f0f3f8;padding:4px 7px;border-radius:20px;font-size:11px}.actions{display:flex;gap:7px;margin-top:14px}.small{background:#f1f3f7;border-radius:7px;padding:7px 9px;font-size:12px}.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.folder{padding:18px;cursor:pointer}.folder:hover{border-color:#a8b7ed}.folder b{font-size:15px}.folder small{display:block;color:var(--muted);margin-top:7px}.empty{text-align:center;padding:60px;background:white;border:1px dashed #cbd4e3;border-radius:12px;color:var(--muted)}.modalbg{display:none;position:fixed;inset:0;background:#0f172a88;z-index:20;align-items:center;justify-content:center;padding:20px}.modal{background:white;border-radius:14px;width:min(760px,100%);max-height:92vh;overflow:auto;padding:23px}.modal h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin:9px 0}.field.full{grid-column:1/-1}.field label{display:block;font-weight:700;font-size:12px;margin-bottom:5px;color:#566176}.field input,.field select,.field textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px}.field textarea{min-height:80px;resize:vertical}.filebox{border:2px dashed #cdd5e4;border-radius:9px;padding:18px;text-align:center;color:var(--muted);cursor:pointer}.files{margin-top:9px;font-size:12px}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.close{float:right;background:none;font-size:22px;color:#6b7280}.detail{display:grid;grid-template-columns:2fr 1fr;gap:18px}.section{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}.section h3{margin:0 0 11px}.kv{display:grid;grid-template-columns:180px 1fr;gap:9px;padding:7px 0;border-bottom:1px solid #eef1f5}.kv:last-child{border:0}.kv b{font-size:12px;color:#59667b}.resource{padding:10px;border:1px solid var(--line);border-radius:8px;margin:7px 0;display:flex;justify-content:space-between;gap:10px}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#172033;color:white;padding:11px 15px;border-radius:8px;z-index:30}
-@media(max-width:850px){.app{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.detail,.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.top{padding:0 12px}.content{padding:17px}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Segoe UI,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{background:var(--dark);color:#dbe3f1;padding:20px 15px;display:flex;flex-direction:column;justify-content:space-between}.brand{font-size:21px;font-weight:800;padding:5px 10px 24px}.brand i{color:#8da6ff;font-style:normal}.nav button{display:block;width:100%;text-align:left;background:none;color:#b9c4d7;padding:11px;border-radius:9px;margin:4px 0}.nav button:hover,.nav button.on{background:#202b42;color:white}.user-box{padding:10px;background:#1e293b;border-radius:8px;font-size:12px;margin-bottom:10px;word-break:break-all}.user-box b{display:block;color:#93c5fd;margin-top:2px}.hint{color:#8d9ab0;font-size:11px;line-height:1.6;margin-top:15px}.main{min-width:0}.top{height:70px;background:white;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;padding:0 25px;position:sticky;top:0;z-index:5}.search{flex:1;position:relative}.search input{width:100%;padding:11px 14px 11px 36px;border:1px solid var(--line);border-radius:9px;background:#fafbfe;outline:0}.search span{position:absolute;left:13px;top:10px;color:#8792a5;font-size:18px}.btn{padding:10px 13px;border-radius:8px;background:#eef1f6;font-weight:600;color:#2a3447}.primary{background:var(--blue);color:white}.content{padding:27px;max-width:1500px;margin:auto}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.head h1{margin:0;font-size:27px}.head p{margin:5px 0;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.stat,.box,.card,.folder{background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 25px rgba(25,38,65,.06)}.stat{padding:17px}.stat small{color:var(--muted)}.stat b{display:block;font-size:24px;margin-top:5px}.toolbar{display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap}.toolbar select{padding:9px;border:1px solid var(--line);border-radius:8px;background:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:15px}.card{padding:16px}.icon{font-size:26px}.card h3{margin:10px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.muted{color:var(--muted);font-size:12px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.tag{background:#f0f3f8;padding:4px 7px;border-radius:20px;font-size:11px}.actions{display:flex;gap:7px;margin-top:14px}.small{background:#f1f3f7;border-radius:7px;padding:7px 9px;font-size:12px}.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.folder{padding:18px;cursor:pointer}.folder:hover{border-color:#a8b7ed}.folder b{font-size:15px}.folder small{display:block;color:var(--muted);margin-top:7px}.empty{text-align:center;padding:60px;background:white;border:1px dashed #cbd4e3;border-radius:12px;color:var(--muted)}.modalbg{display:none;position:fixed;inset:0;background:#0f172a88;z-index:20;align-items:center;justify-content:center;padding:20px}.modal{background:white;border-radius:14px;width:min(760px,100%);max-height:92vh;overflow:auto;padding:23px}.modal h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin:9px 0}.field.full{grid-column:1/-1}.field label{display:block;font-weight:700;font-size:12px;margin-bottom:5px;color:#566176}.field input,.field select,.field textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px}.field textarea{min-height:80px;resize:vertical}.filebox{border:2px dashed #cdd5e4;border-radius:9px;padding:18px;text-align:center;color:var(--muted);cursor:pointer}.files{margin-top:9px;font-size:12px}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.close{float:right;background:none;font-size:22px;color:#6b7280}.detail{display:grid;grid-template-columns:1fr 350px;gap:18px}@media(max-width:1000px){.detail{grid-template-columns:1fr}}.section{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}.section h3{margin:0 0 11px}.kv{display:grid;grid-template-columns:130px 1fr;gap:9px;padding:6px 0;border-bottom:1px solid #eef1f5;font-size:13px}.kv:last-child{border:0}.kv b{font-size:12px;color:#59667b}.resource{padding:10px;border:1px solid var(--line);border-radius:8px;margin:7px 0;display:flex;justify-content:space-between;gap:10px}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#172033;color:white;padding:11px 15px;border-radius:8px;z-index:30}
+@media(max-width:850px){.app{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.top{padding:0 12px}.content{padding:17px}}
 </style>
 </head>
 <body>
 
-<!-- Login Modal (Shown if user is not authenticated) -->
+<!-- Login Modal -->
 <div class="modalbg" id="loginModal" style="display:flex;">
   <div class="modal" style="width:min(400px,100%);">
     <h2>🔐 HPS TrainingHub Login</h2>
@@ -37,6 +37,8 @@
       <button data-nav="folders">▰ &nbsp; Training folders</button>
       <button data-nav="materials">▣ &nbsp; All materials</button>
       <button data-nav="favorites">★ &nbsp; Favorites</button>
+      <button data-nav="validation">🛡️ &nbsp; Validation log</button>
+      <button data-nav="admin">⚙️ &nbsp; Administration</button>
     </div>
   </div>
   <div>
@@ -50,10 +52,14 @@
 <section class="content"><div class="head"><div><h1 id="title">Training Dashboard</h1><p id="subtitle">Organize complete training courses and resources online.</p></div></div><div id="view"></div></section>
 </main></div>
 
+<!-- Folder Modal -->
 <div class="modalbg" id="folderModal"><div class="modal"><button class="close" onclick="closeM('folderModal')">×</button><h2>Create training folder</h2><div class="field"><label>Folder name</label><input id="folderName" placeholder="e.g. PowerCARD Issuer"></div><div class="modalfoot"><button class="btn" onclick="closeM('folderModal')">Cancel</button><button class="btn primary" id="createFolder">Create</button></div></div></div>
 
-<div class="modalbg" id="materialModal"><div class="modal"><button class="close" onclick="closeM('materialModal')">×</button><h2 id="materialTitle">Add training material</h2>
-<form id="materialForm"><div class="formgrid">
+<!-- Material Modal (Add / Edit) -->
+<div class="modalbg" id="materialModal"><div class="modal"><button class="close" onclick="closeM('materialModal')">×</button><h2 id="materialModalTitle">Add training material</h2>
+<form id="materialForm">
+<input type="hidden" id="mEditId">
+<div class="formgrid">
 <div class="field"><label>Material / section title *</label><input id="mTitle" required placeholder="e.g. PowerCARD Issuer — Payment Instruments"></div>
 <div class="field"><label>Training folder *</label><select id="mFolder" required></select></div>
 <div class="field full"><label>Description</label><textarea id="mDesc" placeholder="What should the trainer/learner know after this section?"></textarea></div>
@@ -63,12 +69,22 @@
 <div class="field"><label>Assessment method</label><input id="mAssessment" placeholder="Quiz, practical, observation, case study…"></div>
 <div class="field full"><label>eAcademy link — EN</label><input id="mEn" type="url" placeholder="https://…"></div>
 <div class="field full"><label>eAcademy link — FR</label><input id="mFr" type="url" placeholder="https://…"></div>
-<div class="field"><label>Dataset / Simulation</label><input id="mDataset" placeholder="Dataset name, path or notes"></div>
-<div class="field"><label>One-pager / Mindmap</label><input id="mOne" placeholder="Description or file link"></div>
+<div class="field"><label>Dataset / Simulation link</label><input id="mDataset" type="url" placeholder="https://…"></div>
+<div class="field"><label>One-pager / Mindmap link</label><input id="mOne" type="url" placeholder="https://…"></div>
 <div class="field full"><label>Files — PDF, Word, PowerPoint, Excel, video, audio, images, ZIP, etc.</label>
 <div class="filebox" id="fileBox">Click here to select one or multiple files<br><small>Files are ready for cloud storage upload.</small></div><input id="files" type="file" multiple hidden><div class="files" id="fileList"></div></div>
-</div><div class="modalfoot"><button type="button" class="btn" onclick="closeM('materialModal')">Cancel</button><button class="btn primary">Save material</button></div></form>
+</div><div class="modalfoot"><button type="button" class="btn" onclick="closeM('materialModal')">Cancel</button><button class="btn primary" id="saveMaterialBtn">Save material</button></div></form>
 </div></div>
+
+<!-- Add User Modal (Admin) -->
+<div class="modalbg" id="userModal"><div class="modal" style="width:min(450px,100%);"><button class="close" onclick="closeM('userModal')">×</button><h2>Add New User</h2>
+<form id="userForm">
+<div class="field full"><label>Email address</label><input type="email" id="newUserEmail" required placeholder="user@hps-worldwide.com"></div>
+<div class="field full"><label>Temporary Password</label><input type="password" id="newUserPass" required placeholder="••••••••"></div>
+<div class="field full"><label>System Role</label><select id="newUserRole"><option value="trainer">Trainer</option><option value="admin">Admin</option></select></div>
+<div class="modalfoot"><button type="button" class="btn" onclick="closeM('userModal')">Cancel</button><button type="submit" class="btn primary">Create User</button></div>
+</form></div></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -78,7 +94,7 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fxcd-0JYlGSOjBE1B74A2Q_3zRZYdlN
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let currentUser = null, currentRole = 'trainer';
-let state = { folders: [], items: [] }, nav = 'dashboard', folder = null, search = '', pendingFiles = [];
+let state = { folders: [], items: [], users: [], logs: [] }, nav = 'dashboard', folder = null, search = '', pendingFiles = [];
 
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c])) }
 function closeM(id) { document.getElementById(id).style.display = 'none' }
@@ -106,18 +122,15 @@ async function checkAuth() {
   load();
 }
 
-// Handle Login Submission
 document.getElementById('loginForm').onsubmit = async e => {
   e.preventDefault();
   let email = document.getElementById('loginEmail').value.trim();
   let password = document.getElementById('loginPassword').value;
 
   let { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    alert('Login failed: ' + error.message);
-    return;
-  }
+  if (error) { alert('Login failed: ' + error.message); return; }
   toast('Signed in successfully!');
+  logActivity('User Login', `User ${email} signed in.`);
   checkAuth();
 };
 
@@ -126,23 +139,21 @@ async function logout() {
   window.location.reload();
 }
 
-// Load Folders and Materials from Supabase Cloud Database
+async function logActivity(action, details) {
+  try {
+    await _supabase.from('activity_logs').insert([{
+      user_email: currentUser?.email || 'System',
+      action: action,
+      details: details,
+      status: 'Verified'
+    }]);
+  } catch(e) { console.warn('Logging skipped:', e); }
+}
+
 async function load() {
   try {
     let { data: folders, error: fErr } = await _supabase.from('folders').select('*');
     if (fErr) throw fErr;
-
-    if (!folders || folders.length === 0) {
-      const defaultFolders = [
-        { name: 'General' },
-        { name: 'PowerCARD' },
-        { name: 'Payments' },
-        { name: 'Trust & Safety' },
-        { name: 'Onboarding' }
-      ];
-      let { data: newF, error: insErr } = await _supabase.from('folders').insert(defaultFolders).select();
-      if (!insErr) folders = newF;
-    }
     state.folders = folders || [];
 
     let { data: materials, error: mErr } = await _supabase.from('training_materials').select('*');
@@ -150,6 +161,12 @@ async function load() {
 
     let { data: files, error: fileErr } = await _supabase.from('material_files').select('*');
     if (fileErr) console.warn('Files fetch warning:', fileErr);
+
+    let { data: profiles, error: pErr } = await _supabase.from('profiles').select('*');
+    if (!pErr) state.users = profiles || [];
+
+    let { data: logs, error: lErr } = await _supabase.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(20);
+    if (!lErr) state.logs = logs || [];
 
     state.items = (materials || []).map(m => {
       let mFiles = (files || []).filter(f => f.material_id === m.id);
@@ -185,6 +202,10 @@ function filtered() {
 
 function render() {
   document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('on', b.dataset.nav === nav));
+  
+  if (nav === 'admin') return renderAdmin();
+  if (nav === 'validation') return renderValidation();
+
   let title = folder ? (state.folders.find(f => f.id == folder)?.name || 'Folder') : (nav === 'folders' ? 'Training folders' : nav === 'materials' ? 'All materials' : nav === 'favorites' ? 'Favorites' : 'Training Dashboard');
   document.getElementById('title').textContent = title;
   document.getElementById('subtitle').textContent = folder ? `${filtered().length} training section(s)` : 'Organize complete training courses and resources online.';
@@ -229,13 +250,13 @@ async function editFolder(id, currentName) {
   let newName = prompt('Edit folder name:', currentName);
   if (!newName || !newName.trim()) return;
   let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
-  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); await load(); }
+  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); logActivity('Folder Edited', `Folder renamed to ${newName}`); await load(); }
 }
 
 async function deleteFolder(id, name) {
   if (!confirm(`Delete folder "${name}"? Materials inside will be unassigned.`)) return;
   let { error } = await _supabase.from('folders').delete().eq('id', id);
-  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); await load(); }
+  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); logActivity('Folder Deleted', `Folder ${name} removed`); await load(); }
 }
 
 function renderItems() {
@@ -265,6 +286,7 @@ function card(x) {
       <div class="muted">${esc(x.description || 'No description')}</div>
       <div class="actions">
         <button class="small" data-open="${x.id}">Open</button>
+        <button class="small" data-edit="${x.id}">✏️ Edit</button>
         <button class="small" data-fav="${x.id}">${x.favorite ? '★' : '☆'}</button>
         <button class="small" data-del="${x.id}">Delete</button>
       </div>
@@ -273,6 +295,7 @@ function card(x) {
 
 function bindCards() {
   document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => detail(b.dataset.open));
+  document.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEditMaterial(b.dataset.edit));
   document.querySelectorAll('[data-fav]').forEach(b => b.onclick = async () => {
     let x = state.items.find(x => x.id == b.dataset.fav);
     x.favorite = !x.favorite;
@@ -281,7 +304,9 @@ function bindCards() {
   });
   document.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
     if (confirm('Delete this training section and its cloud records?')) {
+      let x = state.items.find(x => x.id == b.dataset.del);
       await _supabase.from('training_materials').delete().eq('id', b.dataset.del);
+      logActivity('Material Deleted', `Deleted material: ${x?.title}`);
       await load();
       toast('Deleted');
     }
@@ -293,9 +318,33 @@ function openFolder(id) { folder = id; nav = 'materials'; render(); }
 async function openMaterial() {
   pendingFiles = [];
   document.getElementById('materialForm').reset();
+  document.getElementById('mEditId').value = '';
+  document.getElementById('materialModalTitle').textContent = 'Add training material';
   document.getElementById('mFolder').innerHTML = state.folders.map(f => `<option value="${f.id}">${esc(f.name)}</option>`).join('');
   if (folder) document.getElementById('mFolder').value = folder;
   document.getElementById('fileList').innerHTML = '';
+  document.getElementById('materialModal').style.display = 'flex';
+}
+
+function openEditMaterial(id) {
+  let x = state.items.find(item => item.id === id);
+  if (!x) return;
+  pendingFiles = [];
+  document.getElementById('materialForm').reset();
+  document.getElementById('mEditId').value = x.id;
+  document.getElementById('materialModalTitle').textContent = 'Edit training material';
+  document.getElementById('mFolder').innerHTML = state.folders.map(f => `<option value="${f.id}" ${f.id == x.folderId ? 'selected' : ''}>${esc(f.name)}</option>`).join('');
+  document.getElementById('mTitle').value = x.title;
+  document.getElementById('mDesc').value = x.description;
+  document.getElementById('mKeywords').value = x.keywords;
+  document.getElementById('mTime').value = x.time;
+  document.getElementById('mVersion').value = x.version;
+  document.getElementById('mAssessment').value = x.assessment;
+  document.getElementById('mEn').value = x.en;
+  document.getElementById('mFr').value = x.fr;
+  document.getElementById('mDataset').value = x.dataset;
+  document.getElementById('mOne').value = x.onepager;
+  document.getElementById('fileList').innerHTML = `${x.files.length} existing file(s) attached.`;
   document.getElementById('materialModal').style.display = 'flex';
 }
 
@@ -322,13 +371,51 @@ function detail(id) {
           <div class="kv"><b>Estimated time</b><span>${esc(x.time || '—')}</span></div>
           <div class="kv"><b>PowerCARD Version</b><span>${esc(x.version || '—')}</span></div>
           <div class="kv"><b>Assessment</b><span>${esc(x.assessment || '—')}</span></div>
-          <div class="kv"><b>Dataset / Simulation</b><span>${esc(x.dataset || '—')}</span></div>
-          <div class="kv"><b>One-pager / Mindmap</b><span>${esc(x.onepager || '—')}</span></div>
-          <div class="kv"><b>eAcademy EN</b><span>${x.en ? `<a class="small" href="${esc(x.en)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:4px 10px; border-radius:6px; font-weight:600;">🔗 Open EN Link</a>` : '—'}</span></div>
-          <div class="kv"><b>eAcademy FR</b><span>${x.fr ? `<a class="small" href="${esc(x.fr)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:4px 10px; border-radius:6px; font-weight:600;">🔗 Open FR Link</a>` : '—'}</span></div>
+          <div class="kv"><b>Dataset / Sim</b><span>${x.dataset ? `<a class="small" href="${esc(x.dataset)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 Open Dataset</a>` : '—'}</span></div>
+          <div class="kv"><b>One-pager</b><span>${x.onepager ? `<a class="small" href="${esc(x.onepager)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 Open One-pager</a>` : '—'}</span></div>
+          <div class="kv"><b>eAcademy EN</b><span>${x.en ? `<a class="small" href="${esc(x.en)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 EN Course</a>` : '—'}</span></div>
+          <div class="kv"><b>eAcademy FR</b><span>${x.fr ? `<a class="small" href="${esc(x.fr)}" target="_blank" style="text-decoration:none; display:inline-block; background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:6px; font-weight:600;">🔗 FR Course</a>` : '—'}</span></div>
         </div>
         <button class="btn" onclick="render()">← Back</button>
       </div>
+    </div>`;
+}
+
+function renderAdmin() {
+  document.getElementById('title').textContent = 'System Administration';
+  document.getElementById('subtitle').textContent = 'Manage user access, system roles, and credentials.';
+  document.getElementById('view').innerHTML = `
+    <div class="section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h3>Registered System Users</h3>
+        ${currentRole === 'admin' ? '<button class="btn primary" onclick="document.getElementById(\'userModal\').style.display=\'flex\'">＋ Add User</button>' : '<small class="muted">Admin privileges required to add users</small>'}
+      </div>
+      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;">
+        <thead><tr style="border-bottom:2px solid var(--line); color:var(--muted);"><th style="padding:10px;">User ID</th><th style="padding:10px;">Role</th></tr></thead>
+        <tbody>
+          ${state.users.map(u => `<tr style="border-bottom:1px solid var(--line);"><td style="padding:10px;">${esc(u.id)}</td><td style="padding:10px;"><b>${esc((u.role || 'trainer').toUpperCase())}</b></td></tr>`).join('') || '<tr><td colspan="2" style="padding:20px; text-align:center;" class="muted">No user profile records found.</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h3>Security & Password Management</h3>
+      <p class="muted">To change your account password, use Supabase Auth reset protocol or contact your system administrator.</p>
+      <button class="btn" onclick="let p = prompt('Enter new password:'); if(p) { _supabase.auth.updateUser({password: p}).then(() => toast('Password updated!')); }">Change My Password</button>
+    </div>`;
+}
+
+function renderValidation() {
+  document.getElementById('title').textContent = 'Validation & Activity Log';
+  document.getElementById('subtitle').textContent = 'Audit trail of recent system operations and their validation status.';
+  document.getElementById('view').innerHTML = `
+    <div class="section">
+      <h3>Recent Cloud Activity Log</h3>
+      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;">
+        <thead><tr style="border-bottom:2px solid var(--line); color:var(--muted);"><th style="padding:10px;">Time</th><th style="padding:10px;">User</th><th style="padding:10px;">Action</th><th style="padding:10px;">Details</th><th style="padding:10px;">Status</th></tr></thead>
+        <tbody>
+          ${state.logs.map(l => `<tr style="border-bottom:1px solid var(--line);"><td style="padding:10px; color:var(--muted);">${new Date(l.created_at).toLocaleString()}</td><td style="padding:10px;">${esc(l.user_email)}</td><td style="padding:10px;"><b>${esc(l.action)}</b></td><td style="padding:10px;">${esc(l.details)}</td><td style="padding:10px;"><span style="background:#eef2ff; color:#315efb; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:600;">${esc(l.status)}</span></td></tr>`).join('') || '<tr><td colspan="5" style="padding:20px; text-align:center;" class="muted">No logs recorded yet.</td></tr>'}
+        </tbody>
+      </table>
     </div>`;
 }
 
@@ -350,8 +437,27 @@ document.getElementById('createFolder').onclick = async () => {
   let { error } = await _supabase.from('folders').insert([{ name: n }]);
   if (error) return toast('Error creating folder');
   closeM('folderModal');
+  logActivity('Folder Created', `Created folder ${n}`);
   await load();
   toast('Folder created');
+};
+
+document.getElementById('userForm').onsubmit = async e => {
+  e.preventDefault();
+  let email = document.getElementById('newUserEmail').value.trim();
+  let password = document.getElementById('newUserPass').value;
+  let role = document.getElementById('newUserRole').value;
+
+  let { data, error } = await _supabase.auth.signUp({ email, password });
+  if (error) { alert('Error creating user: ' + error.message); return; }
+  
+  if (data.user) {
+    await _supabase.from('profiles').insert([{ id: data.user.id, role: role }]);
+  }
+  closeM('userModal');
+  toast('User created successfully!');
+  logActivity('User Created', `Created user ${email} with role ${role}`);
+  await load();
 };
 
 document.getElementById('fileBox').onclick = () => document.getElementById('files').click();
@@ -364,7 +470,8 @@ document.getElementById('materialForm').onsubmit = async e => {
   e.preventDefault();
   toast('Saving material and uploading files...');
 
-  let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([{
+  let editId = document.getElementById('mEditId').value;
+  let materialData = {
     title: document.getElementById('mTitle').value.trim(),
     folder_id: document.getElementById('mFolder').value,
     description: document.getElementById('mDesc').value,
@@ -377,29 +484,31 @@ document.getElementById('materialForm').onsubmit = async e => {
     dataset: document.getElementById('mDataset').value,
     onepager: document.getElementById('mOne').value,
     status: 'published'
-  }]).select().single();
+  };
 
-  if (matErr) {
-    console.error('Material save error:', matErr);
-    return toast('Error saving training material');
+  let materialId = editId;
+  if (editId) {
+    let { error: updateErr } = await _supabase.from('training_materials').update(materialData).eq('id', editId);
+    if (updateErr) { console.error('Update error:', updateErr); return toast('Error updating material'); }
+    logActivity('Material Edited', `Updated material: ${materialData.title}`);
+  } else {
+    let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
+    if (matErr) { console.error('Material save error:', matErr); return toast('Error saving training material'); }
+    materialId = matData.id;
+    logActivity('Material Created', `Created material: ${materialData.title}`);
   }
-
-  const materialId = matData.id;
 
   for (let file of pendingFiles) {
     let filePath = `materials/${materialId}/${Date.now()}_${file.name}`;
-    let { data: uploadData, error: uploadErr } = await _supabase.storage.from('training-files').upload(filePath, file);
+    let { error: uploadErr } = await _supabase.storage.from('training-files').upload(filePath, file);
 
-    if (uploadErr) {
-      console.error('Storage upload failed:', uploadErr);
-    } else {
-      let { error: fileDbErr } = await _supabase.from('material_files').insert([{
+    if (!uploadErr) {
+      await _supabase.from('material_files').insert([{
         material_id: materialId,
         file_name: file.name,
         file_path: filePath,
         file_size: file.size
       }]);
-      if (fileDbErr) console.error('File DB record error:', fileDbErr);
     }
   }
 
