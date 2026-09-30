@@ -112,12 +112,17 @@ async function checkAuth() {
   currentUser = session.user;
   document.getElementById('userEmailDisplay').textContent = currentUser.email;
   
-  let { data: profile } = await _supabase.from('profiles').select('role').eq('id', currentUser.id).limit(1);
-  if (profile && profile.length > 0) {
-    currentRole = profile[0].role;
+  // Force admin role if this is your specific email, or read from profile/metadata
+  if (currentUser.email === 'yassin.khaiar@hps-worldwide.com') {
+    currentRole = 'admin';
+  } else {
+    let { data: profile } = await _supabase.from('profiles').select('role').eq('id', currentUser.id).limit(1);
+    if (profile && profile.length > 0) {
+      currentRole = profile[0].role || 'trainer';
+    }
   }
+
   document.getElementById('userRoleDisplay').textContent = currentRole.toUpperCase();
-  
   document.getElementById('loginModal').style.display = 'none';
   load();
 }
@@ -452,7 +457,7 @@ document.getElementById('userForm').onsubmit = async e => {
   if (error) { alert('Error creating user: ' + error.message); return; }
   
   if (data.user) {
-    await _supabase.from('profiles').insert([{ id: data.user.id, role: role }]);
+    await _supabase.from('profiles').insert([{ id: data.user.id, email: email, role: role }]);
   }
   closeM('userModal');
   toast('User created successfully!');
