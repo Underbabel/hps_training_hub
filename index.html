@@ -7,7 +7,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#687386;--line:#e3e8f0;--blue:#315efb;--soft:#eef2ff;--dark:#111827}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Segoe UI,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{background:var(--dark);color:#dbe3f1;padding:20px 15px;display:flex;flex-direction:column;justify-content:space-between}.brand{font-size:21px;font-weight:800;padding:5px 10px 24px}.brand i{color:#8da6ff;font-style:normal}.nav button{display:block;width:100%;text-align:left;background:none;color:#b9c4d7;padding:11px;border-radius:9px;margin:4px 0}.nav button:hover,.nav button.on{background:#202b42;color:white}.user-box{padding:10px;background:#1e293b;border-radius:8px;font-size:12px;margin-bottom:10px;word-break:break-all}.user-box b{display:block;color:#93c5fd;margin-top:2px}.hint{color:#8d9ab0;font-size:11px;line-height:1.6;margin-top:15px}.main{min-width:0}.top{height:70px;background:white;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;padding:0 25px;position:sticky;top:0;z-index:5}.search{flex:1;position:relative}.search input{width:100%;padding:11px 14px 11px 36px;border:1px solid var(--line);border-radius:9px;background:#fafbfe;outline:0}.search span{position:absolute;left:13px;top:10px;color:#8792a5;font-size:18px}.btn{padding:10px 13px;border-radius:8px;background:#eef1f6;font-weight:600;color:#2a3447}.primary{background:var(--blue);color:white}.content{padding:27px;max-width:1500px;margin:auto}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.head h1{margin:0;font-size:27px}.head p{margin:5px 0;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.stat,.box,.card,.folder{background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 25px rgba(25,38,65,.06)}.stat{padding:17px}.stat small{color:var(--muted)}.stat b{display:block;font-size:24px;margin-top:5px}.toolbar{display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap}.toolbar select{padding:9px;border:1px solid var(--line);border-radius:8px;background:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:15px}.card{padding:16px}.icon{font-size:26px}.card h3{margin:10px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.muted{color:var(--muted);font-size:12px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.tag{background:#f0f3f8;padding:4px 7px;border-radius:20px;font-size:11px}.actions{display:flex;gap:7px;margin-top:14px}.small{background:#f1f3f7;border-radius:7px;padding:7px 9px;font-size:12px}.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.folder{padding:18px;cursor:pointer}.folder:hover{border-color:#a8b7ed}.folder b{font-size:15px}.folder small{display:block;color:var(--muted);margin-top:7px}.empty{text-align:center;padding:60px;background:white;border:1px dashed #cbd4e3;border-radius:12px;color:var(--muted)}.modalbg{display:none;position:fixed;inset:0;background:#0f172a88;z-index:20;align-items:center;justify-content:center;padding:20px}.modal{background:white;border-radius:14px;width:min(760px,100%);max-height:92vh;overflow:auto;padding:23px}.modal h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin:9px 0}.field.full{grid-column:1/-1}.field label{display:block;font-weight:700;font-size:12px;margin-bottom:5px;color:#566176}.field input,.field select,.field textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px}.field textarea{min-height:80px;resize:vertical}.filebox{border:2px dashed #cdd5e4;border-radius:9px;padding:18px;text-align:center;color:var(--muted);cursor:pointer}.files{margin-top:9px;font-size:12px}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.close{float:right;background:none;font-size:22px;color:#6b7280}.detail{display:grid;grid-template-columns:1fr 350px;gap:18px}@media(max-width:1000px){.detail{grid-template-columns:1fr}}.section{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}.section h3{margin:0 0 11px}.kv{display:grid;grid-template-columns:130px 1fr;gap:9px;padding:6px 0;border-bottom:1px solid #eef1f5;font-size:13px}.kv:last-child{border:0}.kv b{font-size:12px;color:#59667b}.resource{padding:10px;border:1px solid var(--line);border-radius:8px;margin:7px 0;display:flex;justify-content:space-between;gap:10px}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#172033;color:white;padding:11px 15px;border-radius:8px;z-index:30}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Segoe UI,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{background:var(--dark);color:#dbe3f1;padding:20px 15px;display:flex;flex-direction:column;justify-content:space-between}.brand{font-size:21px;font-weight:800;padding:5px 10px 24px}.brand i{color:#8da6ff;font-style:normal}.nav button{display:block;width:100%;text-align:left;background:none;color:#b9c4d7;padding:11px;border-radius:9px;margin:4px 0}.nav button:hover,.nav button.on{background:#202b42;color:white}.user-box{padding:10px;background:#1e293b;border-radius:8px;font-size:12px;margin-bottom:10px;word-break:break-all}.user-box b{display:block;color:#93c5fd;margin-top:2px}.hint{color:#8d9ab0;font-size:11px;line-height:1.6;margin-top:15px}.main{min-width:0}.top{height:70px;background:white;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;padding:0 25px;position:sticky;top:0;z-index:5}.search{flex:1;position:relative}.search input{width:100%;padding:11px 14px 11px 36px;border:1px solid var(--line);border-radius:9px;background:#fafbfe;outline:0}.search span{position:absolute;left:13px;top:10px;color:#8792a5;font-size:18px}.btn{padding:10px 13px;border-radius:8px;background:#eef1f6;font-weight:600;color:#2a3447}.primary{background:var(--blue);color:white}.content{padding:27px;max-width:1500px;margin:auto}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.head h1{margin:0;font-size:27px}.head p{margin:5px 0;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.stat,.box,.card,.folder{background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 25px rgba(25,38,65,.06)}.stat{padding:17px}.stat small{color:var(--muted)}.stat b{display:block;font-size:24px;margin-top:5px}.toolbar{display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap}.toolbar select{padding:9px;border:1px solid var(--line);border-radius:8px;background:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:15px}.card{padding:16px}.icon{font-size:26px}.card h3{margin:10px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.muted{color:var(--muted);font-size:12px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.tag{background:#f0f3f8;padding:4px 7px;border-radius:20px;font-size:11px}.actions{display:flex;gap:7px;margin-top:14px}.small{background:#f1f3f7;border-radius:7px;padding:7px 9px;font-size:12px}.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.folder{padding:18px;cursor:pointer;position:relative}.folder:hover{border-color:#a8b7ed}.folder b{font-size:15px}.folder small{display:block;color:var(--muted);margin-top:7px}.empty{text-align:center;padding:60px;background:white;border:1px dashed #cbd4e3;border-radius:12px;color:var(--muted)}.modalbg{display:none;position:fixed;inset:0;background:#0f172a88;z-index:20;align-items:center;justify-content:center;padding:20px}.modal{background:white;border-radius:14px;width:min(760px,100%);max-height:92vh;overflow:auto;padding:23px}.modal h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin:9px 0}.field.full{grid-column:1/-1}.field label{display:block;font-weight:700;font-size:12px;margin-bottom:5px;color:#566176}.field input,.field select,.field textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px}.field textarea{min-height:80px;resize:vertical}.filebox{border:2px dashed #cdd5e4;border-radius:9px;padding:18px;text-align:center;color:var(--muted);cursor:pointer}.files{margin-top:9px;font-size:12px}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.close{float:right;background:none;font-size:22px;color:#6b7280}.detail{display:grid;grid-template-columns:1fr 350px;gap:18px}@media(max-width:1000px){.detail{grid-template-columns:1fr}}.section{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}.section h3{margin:0 0 11px}.kv{display:grid;grid-template-columns:130px 1fr;gap:9px;padding:6px 0;border-bottom:1px solid #eef1f5;font-size:13px}.kv:last-child{border:0}.kv b{font-size:12px;color:#59667b}.resource{padding:10px;border:1px solid var(--line);border-radius:8px;margin:7px 0;display:flex;justify-content:space-between;gap:10px}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#172033;color:white;padding:11px 15px;border-radius:8px;z-index:30}
+.banner{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:12px 20px;border-radius:10px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.badge{padding:3px 8px;border-radius:10px;font-size:11px;font-weight:600;display:inline-block}
+.badge-approved{background:#dcfce7;color:#166534}
+.badge-pending{background:#fef3c7;color:#d97706}
+.badge-rejected{background:#fee2e2;color:#b91c1c}
 @media(max-width:850px){.app{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.top{padding:0 12px}.content{padding:17px}}
 </style>
 </head>
@@ -49,13 +54,17 @@
 </aside>
 <main class="main">
 <header class="top"><div class="search"><span>⌕</span><input id="search" placeholder="Search materials, keywords, PowerCARD versions…"></div><button class="btn" id="folderBtn">＋ Folder</button><button class="btn primary" id="materialBtn">＋ Material</button></header>
-<section class="content"><div class="head"><div><h1 id="title">Training Dashboard</h1><p id="subtitle">Organize complete training courses and resources online.</p></div></div><div id="view"></div></section>
+<section class="content">
+  <div id="notificationBanner"></div>
+  <div class="head"><div><h1 id="title">Training Dashboard</h1><p id="subtitle">Organize complete training courses and resources online.</p></div></div>
+  <div id="view"></div>
+</section>
 </main></div>
 
 <!-- Folder Modal -->
 <div class="modalbg" id="folderModal"><div class="modal"><button class="close" onclick="closeM('folderModal')">×</button><h2>Create training folder</h2><div class="field"><label>Folder name</label><input id="folderName" placeholder="e.g. PowerCARD Issuer"></div><div class="modalfoot"><button class="btn" onclick="closeM('folderModal')">Cancel</button><button class="btn primary" id="createFolder">Create</button></div></div></div>
 
-<!-- Material Modal (Add / Edit) -->
+<!-- Material Modal -->
 <div class="modalbg" id="materialModal"><div class="modal"><button class="close" onclick="closeM('materialModal')">×</button><h2 id="materialModalTitle">Add training material</h2>
 <form id="materialForm">
 <input type="hidden" id="mEditId">
@@ -102,6 +111,13 @@ function toast(x) { let t = document.getElementById('toast'); t.textContent = x;
 function fileIcon(n) { let e = n.split('.').pop().toLowerCase(); return ['mp4', 'webm', 'mov', 'mkv'].includes(e) ? '🎥' : ['mp3', 'wav', 'm4a', 'ogg'].includes(e) ? '🎧' : ['pdf'].includes(e) ? '📕' : ['doc', 'docx'].includes(e) ? '📘' : ['ppt', 'pptx'].includes(e) ? '📊' : ['xls', 'xlsx', 'csv'].includes(e) ? '📗' : ['jpg', 'jpeg', 'png', 'webp'].includes(e) ? '🖼️' : '📄' }
 function fmtBytes(n) { if (!n) return ''; let u = ['B', 'KB', 'MB', 'GB']; let i = Math.floor(Math.log(n) / Math.log(1024)); return (n / 1024 ** i).toFixed(i ? 1 : 0) + ' ' + u[i] }
 
+function statusBadge(status) {
+  let s = (status || 'Approved').toLowerCase();
+  if (s.includes('pending')) return '<span class="badge badge-pending">Pending Approval</span>';
+  if (s.includes('reject')) return '<span class="badge badge-rejected">Rejected</span>';
+  return '<span class="badge badge-approved">Approved</span>';
+}
+
 async function checkAuth() {
   const { data: { session } } = await _supabase.auth.getSession();
   if (!session) {
@@ -142,7 +158,7 @@ async function logout() {
   window.location.reload();
 }
 
-async function logActivity(action, details, status = 'Verified', payload = null) {
+async function logActivity(action, details, status = 'Approved', payload = null) {
   try {
     await _supabase.from('activity_logs').insert([{
       user_email: currentUser?.email || 'System',
@@ -189,15 +205,32 @@ async function load() {
         dataset: m.dataset || '',
         onepager: m.onepager || '',
         favorite: m.favorite || false,
+        status: m.status || 'Approved',
         files: mFiles.map(f => ({ id: f.id, name: f.file_name, path: f.file_path, size: f.file_size || 0 }))
       };
     });
 
+    renderBanner();
     render();
   } catch (err) {
     console.error('Error loading data from Supabase:', err);
     toast('Error connecting to cloud database');
   }
+}
+
+function renderBanner() {
+  let recentLog = state.logs[0];
+  let banner = document.getElementById('notificationBanner');
+  if (!recentLog) {
+    banner.innerHTML = '';
+    return;
+  }
+  let timeAgo = new Date(recentLog.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  banner.innerHTML = `
+    <div class="banner">
+      <span><b>📢 System Update (${timeAgo}):</b> ${esc(recentLog.action)} — ${esc(recentLog.details)} <span style="margin-left:8px;">Status: <b>${esc(recentLog.status)}</b></span></span>
+      <button class="small primary" onclick="nav='validation'; render();">View Validation Log</button>
+    </div>`;
 }
 
 function filtered() {
@@ -239,12 +272,13 @@ function renderFolders(){
   document.getElementById('view').innerHTML = `
     <div class="folders">
       ${state.folders.map(f => `
-        <div class="folder" onclick="openFolder('${f.id}')" style="position:relative;">
+        <div class="folder" onclick="openFolder('${f.id}')">
           <b>▰ ${esc(f.name)}</b>
           <small>${state.items.filter(x => x.folderId == f.id).length} section(s)</small>
+          <div style="margin-top:8px;">${statusBadge(f.status || 'Approved')}</div>
           <div style="position:absolute; top:12px; right:12px; display:flex; gap:5px;">
             <button class="small" onclick="event.stopPropagation(); editFolder('${f.id}', '${esc(f.name)}')">✏️ Edit</button>
-            <button class="small" onclick="event.stopPropagation(); deleteFolder('${f.id}', '${esc(f.name)}')">🗑️</button>
+            ${currentRole === 'admin' ? `<button class="small" onclick="event.stopPropagation(); deleteFolder('${f.id}', '${esc(f.name)}')">🗑️</button>` : ''}
           </div>
         </div>
       `).join('')}
@@ -256,7 +290,7 @@ async function editFolder(id, currentName) {
   if (!newName || !newName.trim()) return;
   if (currentRole === 'trainer') {
     logActivity('Folder Edit Request', `Trainer requested renaming folder to ${newName}`, 'Pending Approval', { id, newName });
-    toast('⚠️ Folder edit submitted! Check Validation Log for approval.');
+    toast('⚠️ Folder edit submitted for admin approval!');
     return;
   }
   let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
@@ -264,12 +298,8 @@ async function editFolder(id, currentName) {
 }
 
 async function deleteFolder(id, name) {
+  if (currentRole !== 'admin') return;
   if (!confirm(`Delete folder "${name}"?`)) return;
-  if (currentRole === 'trainer') {
-    logActivity('Folder Delete Request', `Trainer requested deletion of folder ${name}`, 'Pending Approval', { id });
-    toast('⚠️ Folder deletion submitted! Check Validation Log for approval.');
-    return;
-  }
   let { error } = await _supabase.from('folders').delete().eq('id', id);
   if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); logActivity('Folder Deleted', `Folder ${name} removed`); await load(); }
 }
@@ -297,13 +327,14 @@ function card(x) {
       <div class="icon">${x.files.length ? '📚' : '📝'}</div>
       <h3 title="${esc(x.title)}">${esc(x.title)}</h3>
       <div class="muted">${esc(f?.name || 'Folder')} · ${esc(x.time || 'Time not set')}</div>
+      <div style="margin:6px 0;">${statusBadge(x.status)}</div>
       <div class="tags">${(x.keywords || '').split(',').filter(Boolean).slice(0, 5).map(t => `<span class="tag">${esc(t.trim())}</span>`).join('')}</div>
       <div class="muted">${esc(x.description || 'No description')}</div>
       <div class="actions">
         <button class="small" data-open="${x.id}">Open</button>
         <button class="small" data-edit="${x.id}">✏️ Edit</button>
         <button class="small" data-fav="${x.id}">${x.favorite ? '★' : '☆'}</button>
-        <button class="small" data-del="${x.id}">Delete</button>
+        ${currentRole === 'admin' ? `<button class="small" data-del="${x.id}">Delete</button>` : ''}
       </div>
     </div>`;
 }
@@ -317,14 +348,11 @@ function bindCards() {
     await _supabase.from('training_materials').update({ favorite: x.favorite }).eq('id', x.id);
     await load();
   });
-  document.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+  let delBtn = document.querySelectorAll('[data-del]');
+  delBtn.forEach(b => b.onclick = async () => {
+    if (currentRole !== 'admin') return;
     if (confirm('Delete this training section?')) {
       let x = state.items.find(x => x.id == b.dataset.del);
-      if (currentRole === 'trainer') {
-        logActivity('Material Delete Request', `Trainer requested deletion of: ${x?.title}`, 'Pending Approval', { id: x.id, title: x.title });
-        toast('⚠️ Deletion request submitted! Check Validation Log for approval.');
-        return;
-      }
       await _supabase.from('training_materials').delete().eq('id', b.dataset.del);
       logActivity('Material Deleted', `Deleted material: ${x?.title}`);
       await load();
@@ -387,6 +415,7 @@ function detail(id) {
       <div>
         <div class="section">
           <h3>Training specification</h3>
+          <div class="kv"><b>Status</b><span>${statusBadge(x.status)}</span></div>
           <div class="kv"><b>Keywords</b><span>${esc(x.keywords || '—')}</span></div>
           <div class="kv"><b>Estimated time</b><span>${esc(x.time || '—')}</span></div>
           <div class="kv"><b>PowerCARD Version</b><span>${esc(x.version || '—')}</span></div>
@@ -426,25 +455,28 @@ function renderAdmin() {
 
 function renderValidation() {
   document.getElementById('title').textContent = 'Validation & Activity Log';
-  document.getElementById('subtitle').textContent = 'Audit trail of recent system operations and pending trainer requests.';
+  document.getElementById('subtitle').textContent = currentRole === 'admin' ? 'Audit trail of recent system operations and pending trainer requests.' : 'Your submitted requests and their review status.';
+  
+  let visibleLogs = currentRole === 'admin' ? state.logs : state.logs.filter(l => l.user_email === currentUser?.email);
+
   document.getElementById('view').innerHTML = `
     <div class="section">
-      <h3>Validation Queue & Activity Log</h3>
+      <h3>Validation Queue (${visibleLogs.length})</h3>
       <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;">
         <thead><tr style="border-bottom:2px solid var(--line); color:var(--muted);"><th style="padding:10px;">Time</th><th style="padding:10px;">User</th><th style="padding:10px;">Action</th><th style="padding:10px;">Details</th><th style="padding:10px;">Status</th><th style="padding:10px;">Approval</th></tr></thead>
         <tbody>
-          ${state.logs.map(l => `
+          ${visibleLogs.map(l => `
             <tr style="border-bottom:1px solid var(--line);">
               <td style="padding:10px; color:var(--muted);">${new Date(l.created_at).toLocaleString()}</td>
               <td style="padding:10px;">${esc(l.user_email)}</td>
               <td style="padding:10px;"><b>${esc(l.action)}</b></td>
               <td style="padding:10px;">${esc(l.details)}</td>
-              <td style="padding:10px;"><span style="background:${l.status === 'Pending Approval' ? '#fef3c7' : '#eef2ff'}; color:${l.status === 'Pending Approval' ? '#d97706' : '#315efb'}; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:600;">${esc(l.status)}</span></td>
+              <td style="padding:10px;">${statusBadge(l.status)}</td>
               <td style="padding:10px;">
                 ${currentRole === 'admin' && l.status === 'Pending Approval' ? `<button class="small primary" onclick="approveLog('${l.id}')">✅ Approve</button> <button class="small" style="background:#fee2e2; color:#b91c1c;" onclick="rejectLog('${l.id}')">❌ Reject</button>` : '—'}
               </td>
             </tr>
-          `).join('') || '<tr><td colspan="6" style="padding:20px; text-align:center;" class="muted">No logs recorded yet.</td></tr>'}
+          `).join('') || '<tr><td colspan="6" style="padding:20px; text-align:center;" class="muted">No validation logs found.</td></tr>'}
         </tbody>
       </table>
     </div>`;
@@ -454,11 +486,12 @@ async function approveLog(logId) {
   let logItem = state.logs.find(l => l.id == logId);
   if (!logItem) return;
 
-  await _supabase.from('activity_logs').update({ status: 'Verified (Approved)' }).eq('id', logId);
+  await _supabase.from('activity_logs').update({ status: 'Approved' }).eq('id', logId);
   
   if (logItem.payload) {
     try {
       let data = JSON.parse(logItem.payload);
+      data.status = 'Approved';
       if (logItem.action === 'Material Create Request') {
         await _supabase.from('training_materials').insert([data]);
       } else if (logItem.action === 'Material Edit Request') {
@@ -474,7 +507,17 @@ async function approveLog(logId) {
 }
 
 async function rejectLog(logId) {
+  let logItem = state.logs.find(l => l.id == logId);
+  if (!logItem) return;
   await _supabase.from('activity_logs').update({ status: 'Rejected' }).eq('id', logId);
+  if (logItem.payload) {
+    try {
+      let data = JSON.parse(logItem.payload);
+      if (data.id) {
+        await _supabase.from('training_materials').update({ status: 'Rejected' }).eq('id', data.id);
+      }
+    } catch(e){}
+  }
   toast('Request rejected');
   await load();
 }
@@ -492,20 +535,21 @@ document.getElementById('materialBtn').onclick = openMaterial;
 
 document.getElementById('createFolder').onclick = async () => {
   let n = document.getElementById('folderName').value.trim();
+  let status = currentRole === 'admin' ? 'Approved' : 'Pending Approval';
   if (!n) return;
   if (state.folders.some(f => f.name.toLowerCase() === n.toLowerCase())) return toast('Folder already exists');
   
   if (currentRole === 'trainer') {
-    logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'Pending Approval', { name: n });
+    logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'Pending Approval', { name: n, status });
     closeM('folderModal');
-    toast('⚠️ Folder creation submitted! Check Validation Log for approval.');
+    toast('⚠️️ Folder creation submitted! Check Validation Log for status.');
     return;
   }
 
-  let { error } = await _supabase.from('folders').insert([{ name: n }]);
+  let { error } = await _supabase.from('folders').insert([{ name: n, status }]);
   if (error) return toast('Error creating folder');
   closeM('folderModal');
-  logActivity('Folder Created', `Created folder ${n}`);
+  logActivity('Folder Created', `Created folder ${n}`, 'Approved');
   await load();
   toast('Folder created');
 };
@@ -524,7 +568,7 @@ document.getElementById('userForm').onsubmit = async e => {
   }
   closeM('userModal');
   toast('User created successfully!');
-  logActivity('User Created', `Created user ${email} with role ${role}`);
+  logActivity('User Created', `Created user ${email} with role ${role}`, 'Approved');
   await load();
 };
 
@@ -539,6 +583,7 @@ document.getElementById('materialForm').onsubmit = async e => {
   toast('Processing material request...');
 
   let editId = document.getElementById('mEditId').value;
+  let materialStatus = currentRole === 'admin' ? 'Approved' : 'Pending Approval';
   let materialData = {
     title: document.getElementById('mTitle').value.trim(),
     folder_id: document.getElementById('mFolder').value,
@@ -551,7 +596,7 @@ document.getElementById('materialForm').onsubmit = async e => {
     fr_link: document.getElementById('mFr').value,
     dataset: document.getElementById('mDataset').value,
     onepager: document.getElementById('mOne').value,
-    status: 'published'
+    status: materialStatus
   };
 
   if (currentRole === 'trainer') {
@@ -559,7 +604,7 @@ document.getElementById('materialForm').onsubmit = async e => {
     if (editId) materialData.id = editId;
     logActivity(actionType, `Trainer submitted material: ${materialData.title}`, 'Pending Approval', materialData);
     closeM('materialModal');
-    toast('⚠️ Submitted! Check Validation section for admin approval status.');
+    toast('⚠️ Submitted! Check Validation section for your approval status.');
     return;
   }
 
@@ -567,12 +612,12 @@ document.getElementById('materialForm').onsubmit = async e => {
   if (editId) {
     let { error: updateErr } = await _supabase.from('training_materials').update(materialData).eq('id', editId);
     if (updateErr) { console.error('Update error:', updateErr); return toast('Error updating material'); }
-    logActivity('Material Edited', `Updated material: ${materialData.title}`);
+    logActivity('Material Edited', `Updated material: ${materialData.title}`, 'Approved');
   } else {
     let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
     if (matErr) { console.error('Material save error:', matErr); return toast('Error saving training material'); }
     materialId = matData.id;
-    logActivity('Material Created', `Created material: ${materialData.title}`);
+    logActivity('Material Created', `Created material: ${materialData.title}`, 'Approved');
   }
 
   for (let file of pendingFiles) {
