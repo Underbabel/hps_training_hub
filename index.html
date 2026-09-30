@@ -98,7 +98,7 @@ let state = { folders: [], items: [], users: [], logs: [] }, nav = 'dashboard', 
 
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c])) }
 function closeM(id) { document.getElementById(id).style.display = 'none' }
-function toast(x) { let t = document.getElementById('toast'); t.textContent = x; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 1800) }
+function toast(x) { let t = document.getElementById('toast'); t.textContent = x; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000) }
 function fileIcon(n) { let e = n.split('.').pop().toLowerCase(); return ['mp4', 'webm', 'mov', 'mkv'].includes(e) ? '🎥' : ['mp3', 'wav', 'm4a', 'ogg'].includes(e) ? '🎧' : ['pdf'].includes(e) ? '📕' : ['doc', 'docx'].includes(e) ? '📘' : ['ppt', 'pptx'].includes(e) ? '📊' : ['xls', 'xlsx', 'csv'].includes(e) ? '📗' : ['jpg', 'jpeg', 'png', 'webp'].includes(e) ? '🖼️' : '📄' }
 function fmtBytes(n) { if (!n) return ''; let u = ['B', 'KB', 'MB', 'GB']; let i = Math.floor(Math.log(n) / Math.log(1024)); return (n / 1024 ** i).toFixed(i ? 1 : 0) + ' ' + u[i] }
 
@@ -167,7 +167,8 @@ async function load() {
     if (fileErr) console.warn('Files fetch warning:', fileErr);
 
     let { data: profiles, error: pErr } = await _supabase.from('profiles').select('*');
-    if (!pErr) state.users = profiles || [];
+    if (pErr) console.warn('Profiles fetch warning:', pErr);
+    state.users = profiles || [];
 
     let { data: logs, error: lErr } = await _supabase.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(25);
     if (!lErr) state.logs = logs || [];
@@ -255,7 +256,7 @@ async function editFolder(id, currentName) {
   if (!newName || !newName.trim()) return;
   if (currentRole === 'trainer') {
     logActivity('Folder Edit Request', `Trainer requested renaming folder to ${newName}`, 'Pending Approval', { id, newName });
-    toast('Folder edit submitted for admin approval');
+    toast('⚠️ Folder edit submitted! Check Validation Log for approval.');
     return;
   }
   let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
@@ -266,7 +267,7 @@ async function deleteFolder(id, name) {
   if (!confirm(`Delete folder "${name}"?`)) return;
   if (currentRole === 'trainer') {
     logActivity('Folder Delete Request', `Trainer requested deletion of folder ${name}`, 'Pending Approval', { id });
-    toast('Folder deletion submitted for admin approval');
+    toast('⚠️ Folder deletion submitted! Check Validation Log for approval.');
     return;
   }
   let { error } = await _supabase.from('folders').delete().eq('id', id);
@@ -321,7 +322,7 @@ function bindCards() {
       let x = state.items.find(x => x.id == b.dataset.del);
       if (currentRole === 'trainer') {
         logActivity('Material Delete Request', `Trainer requested deletion of: ${x?.title}`, 'Pending Approval', { id: x.id, title: x.title });
-        toast('Deletion request submitted for admin approval');
+        toast('⚠️ Deletion request submitted! Check Validation Log for approval.');
         return;
       }
       await _supabase.from('training_materials').delete().eq('id', b.dataset.del);
@@ -410,9 +411,9 @@ function renderAdmin() {
         ${currentRole === 'admin' ? '<button class="btn primary" onclick="document.getElementById(\'userModal\').style.display=\'flex\'">＋ Add User</button>' : '<small class="muted">Admin privileges required to add users</small>'}
       </div>
       <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;">
-        <thead><tr style="border-bottom:2px solid var(--line); color:var(--muted);"><th style="padding:10px;">User ID</th><th style="padding:10px;">Role</th></tr></thead>
+        <thead><tr style="border-bottom:2px solid var(--line); color:var(--muted);"><th style="padding:10px;">User ID</th><th style="padding:10px;">Email / Record</th><th style="padding:10px;">Role</th></tr></thead>
         <tbody>
-          ${state.users.map(u => `<tr style="border-bottom:1px solid var(--line);"><td style="padding:10px;">${esc(u.id)}</td><td style="padding:10px;"><b>${esc((u.role || 'trainer').toUpperCase())}</b></td></tr>`).join('') || '<tr><td colspan="2" style="padding:20px; text-align:center;" class="muted">No user profile records found.</td></tr>'}
+          ${state.users.map(u => `<tr style="border-bottom:1px solid var(--line);"><td style="padding:10px; color:var(--muted);">${esc(u.id)}</td><td style="padding:10px;">${esc(u.email || '—')}</td><td style="padding:10px;"><b>${esc((u.role || 'trainer').toUpperCase())}</b></td></tr>`).join('') || '<tr><td colspan="3" style="padding:20px; text-align:center;" class="muted">No user profile records found.</td></tr>'}
         </tbody>
       </table>
     </div>
@@ -453,10 +454,8 @@ async function approveLog(logId) {
   let logItem = state.logs.find(l => l.id == logId);
   if (!logItem) return;
 
-  // Update log status to Verified
   await _supabase.from('activity_logs').update({ status: 'Verified (Approved)' }).eq('id', logId);
   
-  // If it contained payload data (like a trainer material creation/edit request), execute it now
   if (logItem.payload) {
     try {
       let data = JSON.parse(logItem.payload);
@@ -499,7 +498,7 @@ document.getElementById('createFolder').onclick = async () => {
   if (currentRole === 'trainer') {
     logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'Pending Approval', { name: n });
     closeM('folderModal');
-    toast('Folder creation submitted for admin approval');
+    toast('⚠️ Folder creation submitted! Check Validation Log for approval.');
     return;
   }
 
@@ -560,7 +559,7 @@ document.getElementById('materialForm').onsubmit = async e => {
     if (editId) materialData.id = editId;
     logActivity(actionType, `Trainer submitted material: ${materialData.title}`, 'Pending Approval', materialData);
     closeM('materialModal');
-    toast('Submitted to validation queue for admin approval!');
+    toast('⚠️ Submitted! Check Validation section for admin approval status.');
     return;
   }
 
