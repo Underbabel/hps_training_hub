@@ -30,7 +30,7 @@
     <h2>🔐 HPS TrainingHub Login</h2>
     <p class="muted">Enter your credentials to access the secure training cloud.</p>
     <form id="loginForm">
-      <div class="field full"><label>Email address</label><input type="email" id="loginEmail" autocomplete="email" required placeholder="name@example.com"></div>
+      <div class="field full"><label>Email address</label><input type="email" id="loginEmail" autocomplete="username" required placeholder="name@example.com"></div>
       <div class="field full"><label>Password</label><input type="password" id="loginPassword" autocomplete="current-password" required placeholder="••••••••••••"></div>
       <div class="modalfoot" style="margin-top:20px;">
         <button type="submit" class="btn primary" style="width:100%;">Sign In</button>
@@ -101,13 +101,13 @@
 <div class="field"><label>One-pager / Mindmap link (Optional)</label><input id="mOne" type="text" placeholder="https://… or notes"></div>
 <div class="field full"><label>Files — PDF, Word, PowerPoint, Excel, video, audio, images, ZIP, etc.</label>
 <div class="filebox" id="fileBox">Click here to select one or multiple files<br><small>Files are ready for cloud storage upload.</small></div><input id="files" type="file" multiple hidden><div class="files" id="fileList"></div></div>
-</div><div class="modalfoot"><button type="button" class="btn" onclick="closeM('materialModal')">Cancel</button><button class="btn primary" id="saveMaterialBtn">Save material</button></div></form>
+</div><div class="modalfoot"><button type="button" class="btn" onclick="closeM('materialModal')">Cancel</button><button type="submit" class="btn primary" id="saveMaterialBtn">Save material</button></div></form>
 </div></div>
 
 <!-- Add User Modal (Admin) -->
 <div class="modalbg" id="userModal"><div class="modal" style="width:min(450px,100%);"><button class="close" onclick="closeM('userModal')">×</button><h2>Add New User</h2>
 <form id="userForm">
-<div class="field full"><label>Email address</label><input type="email" id="newUserEmail" autocomplete="email" required placeholder="user@hps-worldwide.com"></div>
+<div class="field full"><label>Email address</label><input type="email" id="newUserEmail" autocomplete="username" required placeholder="user@hps-worldwide.com"></div>
 <div class="field full"><label>Temporary Password</label><input type="password" id="newUserPass" autocomplete="new-password" required placeholder="••••••••"></div>
 <div class="field full"><label>System Role</label><select id="newUserRole"><option value="trainer">Trainer</option><option value="admin">Admin</option></select></div>
 <div class="modalfoot"><button type="button" class="btn" onclick="closeM('userModal')">Cancel</button><button type="submit" class="btn primary">Create User</button></div>
@@ -422,13 +422,17 @@ async function openMaterial() {
 }
 
 function openEditMaterial(id) {
-  let x = state.items.find(item => item.id === id);
+  // Using == instead of === fixes strict type ID matching issues (int vs string UUIDs)
+  let x = state.items.find(item => item.id == id);
   if (!x) return;
   pendingFiles = [];
   document.getElementById('materialForm').reset();
   document.getElementById('mEditId').value = x.id;
   document.getElementById('materialModalTitle').textContent = 'Edit training material';
-  document.getElementById('mFolder').innerHTML = state.folders.map(f => `<option value="${f.id}" ${f.id == x.folderId ? 'selected' : ''}>${esc(f.name)}</option>`).join('');
+  
+  let folderHtml = state.folders.map(f => `<option value="${f.id}" ${f.id == x.folderId ? 'selected' : ''}>${esc(f.name)}</option>`).join('');
+  document.getElementById('mFolder').innerHTML = folderHtml;
+  
   document.getElementById('mTitle').value = x.title;
   document.getElementById('mDesc').value = x.description;
   document.getElementById('mKeywords').value = x.keywords;
@@ -444,7 +448,7 @@ function openEditMaterial(id) {
 }
 
 function detail(id) {
-  let x = state.items.find(x => x.id === id), f = state.folders.find(f => f.id == x.folderId);
+  let x = state.items.find(x => x.id == id), f = state.folders.find(f => f.id == x.folderId);
   document.getElementById('title').textContent = x.title;
   document.getElementById('subtitle').textContent = f?.name || '';
   document.getElementById('view').innerHTML = `
@@ -556,7 +560,9 @@ async function approveLog(logId) {
       } else if (logItem.action === 'Material Edit Request') {
         let matId = data.id;
         delete data.id;
-        await _supabase.from('training_materials').update(data).eq('id', matId);
+        
+        let { data: uData } = await _supabase.from('training_materials').update(data).eq('id', matId).select();
+        if (!uData || uData.length === 0) return alert("Admin approval failed: Supabase RLS is blocking the UPDATE.");
       } else if (logItem.action === 'Material Delete Request') {
         await _supabase.from('training_materials').delete().eq('id', data.id);
       } else if (logItem.action === 'Folder Create Request') {
@@ -665,8 +671,15 @@ document.getElementById('materialForm').onsubmit = async e => {
 
   let materialId = editId;
   if (editId) {
-    let { error: updateErr } = await _supabase.from('training_materials').update(materialData).eq('id', editId);
+    let { error: updateErr, data: updatedRows } = await _supabase.from('training_materials').update(materialData).eq('id', editId).select();
+    
     if (updateErr) { console.error('Update error:', updateErr); return toast('Error updating material'); }
+    
+    // Explicit safety check: If RLS blocked it silently, updatedRows will be empty.
+    if (!updatedRows || updatedRows.length === 0) {
+        return alert("Error: Update failed! Please run the SQL to unlock RLS policies for your database tables.");
+    }
+    
     logActivity('Material Edited', `Updated material: ${materialData.title}`, 'published');
   } else {
     let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
