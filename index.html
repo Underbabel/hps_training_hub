@@ -95,6 +95,16 @@
 </section>
 </main></div>
 
+<!-- Search Results Modal Popup -->
+<div class="modalbg" id="searchModal">
+  <div class="modal" style="width:min(900px, 100%);">
+    <button class="close" onclick="closeM('searchModal')">×</button>
+    <h2 id="searchModalTitle">Search Results</h2>
+    <p class="muted" id="searchModalSubtitle">Matching training materials and resources.</p>
+    <div id="searchResultsContainer" class="grid" style="margin-top:15px;"></div>
+  </div>
+</div>
+
 <!-- Folder Modal -->
 <div class="modalbg" id="folderModal"><div class="modal"><button class="close" onclick="closeM('folderModal')">×</button><h2>Create training folder</h2><div class="field"><label>Folder name</label><input id="folderName" placeholder="e.g. PowerCARD Issuer"></div><div class="modalfoot"><button class="btn" onclick="closeM('folderModal')">Cancel</button><button class="btn primary" id="createFolder">Create</button></div></div></div>
 
@@ -322,17 +332,13 @@ function renderNotifications() {
 }
 
 function filtered() {
-  let q = search.toLowerCase();
   let activeItems = state.items.filter(x => x.status !== 'archived');
   if (nav === 'archived') activeItems = state.items.filter(x => x.status === 'archived');
   
   return activeItems.filter(x => {
-    let folderObj = state.folders.find(f => f.id == x.folderId);
-    let folderName = folderObj ? folderObj.name.toLowerCase() : '';
     let matchesFolder = !folder || x.folderId == folder;
-    let matchesSearch = !q || [x.title, x.description, x.keywords, x.version, x.assessment, x.dataset, folderName].join(' ').toLowerCase().includes(q);
     let matchesFav = nav !== 'favorites' || x.favorite;
-    return matchesFolder && matchesSearch && matchesFav;
+    return matchesFolder && matchesFav;
   });
 }
 
@@ -753,18 +759,36 @@ async function downloadCloudFile(filePath) {
 
 document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => { nav = b.dataset.nav; folder = null; render(); });
 
-// Search Execution Handlers
+// Dedicated Search Execution & Popup Handler
 const executeSearch = () => {
   let searchInput = document.getElementById('search');
-  if (searchInput) {
-    search = searchInput.value;
-    render();
+  if (!searchInput) return;
+  let q = searchInput.value.trim().toLowerCase();
+  
+  if (!q) {
+    toast('Please type a keyword to search.');
+    return;
   }
-};
 
-document.getElementById('search').oninput = e => {
-  search = e.target.value;
-  render();
+  // Filter items across title, description, keywords, version, assessment, dataset, and folder name
+  let matchedItems = state.items.filter(x => {
+    if (x.status === 'archived') return false;
+    let folderObj = state.folders.find(f => f.id == x.folderId);
+    let folderName = folderObj ? folderObj.name.toLowerCase() : '';
+    let searchableText = [x.title, x.description, x.keywords, x.version, x.assessment, x.dataset, folderName].join(' ').toLowerCase();
+    return searchableText.includes(q);
+  });
+
+  // Populate and show Search Results Modal Popup
+  document.getElementById('searchModalTitle').textContent = `Search Results for "${searchInput.value}"`;
+  document.getElementById('searchModalSubtitle').textContent = `Found ${matchedItems.length} matching training material(s).`;
+  
+  let container = document.getElementById('searchResultsContainer');
+  container.innerHTML = matchedItems.map(card).join('') || '<div class="empty" style="grid-column:1/-1;">No matching training materials found.</div>';
+  
+  // Rebind action buttons inside the search popup modal
+  bindCards();
+  document.getElementById('searchModal').style.display = 'flex';
 };
 
 document.getElementById('search').onkeydown = e => {
