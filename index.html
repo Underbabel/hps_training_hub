@@ -17,9 +17,10 @@
 .menu-dropdown button{display:block;width:100%;text-align:left;background:none;padding:8px 12px;font-size:12px;cursor:pointer;color:var(--text)}
 .menu-dropdown button:hover{background:#f8fafc;color:var(--blue)}
 
-/* Notification Dropdown styles */
+/* Notification Dropdown styles & Red Tick badge */
 .notif-container{position:relative}
 .notif-btn{background:#eef1f6;padding:9px 12px;border-radius:8px;font-size:18px;cursor:pointer;position:relative}
+.notif-badge{position:absolute;top:6px;right:6px;width:10px;height:10px;background:#ef4444;border-radius:50%;border:2px solid #fff;display:none}
 .notif-dropdown{display:none;position:absolute;right:0;top:45px;width:360px;background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.1);z-index:50;padding:15px;max-height:400px;overflow:auto}
 .notif-item{padding:8px 0;border-bottom:1px solid #f1f3f7;font-size:12px}
 .notif-item:last-child{border:0}
@@ -52,14 +53,14 @@
 <aside class="side">
   <div>
     <div class="brand">Training<i>Hub</i></div>
-    <div class="nav">
-      <button class="on" data-nav="dashboard">⌂ &nbsp; Dashboard</button>
-      <button data-nav="folders">▰ &nbsp; Training folders</button>
-      <button data-nav="materials">▣ &nbsp; All materials</button>
-      <button data-nav="archived">📦 &nbsp; Archived</button>
-      <button data-nav="favorites">★ &nbsp; Favorites</button>
-      <button data-nav="validation">🛡️ &nbsp; Validation log</button>
-      <button data-nav="admin">⚙️ &nbsp; Administration</button>
+    <div class="nav" id="sidebarNav">
+      <button class="on" data-nav="dashboard">🔻 &nbsp; Dashboard</button>
+      <button data-nav="folders">🔻 &nbsp; Training folders</button>
+      <button data-nav="materials">🔻 &nbsp; All materials</button>
+      <button data-nav="archived">🔻 &nbsp; Archived</button>
+      <button data-nav="favorites">🔻 &nbsp; Favorites</button>
+      <button data-nav="validation">🔻 &nbsp; Validation log</button>
+      <button data-nav="admin" id="adminNavBtn">🔻 &nbsp; Administration</button>
     </div>
   </div>
   <div>
@@ -70,9 +71,9 @@
 </aside>
 <main class="main">
 <header class="top">
-  <div class="search"><span>⌕</span><input id="search" placeholder="Search materials, keywords, PowerCARD versions…"></div>
+  <div class="search"><span>⌕</span><input id="search" placeholder="Search materials, keywords, folders, titles…"></div>
   <div class="notif-container">
-    <button class="notif-btn" id="notifBtn" onclick="toggleNotifDropdown(event)">🔔</button>
+    <button class="notif-btn" id="notifBtn" onclick="toggleNotifDropdown(event)">🔔<span class="notif-badge" id="notifBadge"></span></button>
     <div class="notif-dropdown" id="notifDropdown">
       <div style="font-weight:700; margin-bottom:8px; border-bottom:1px solid var(--line); padding-bottom:6px; display:flex; justify-content:space-between;">
         <span>System Notifications</span>
@@ -152,6 +153,8 @@ function toggleNotifDropdown(e) {
   e.stopPropagation();
   let drop = document.getElementById('notifDropdown');
   drop.style.display = drop.style.display === 'block' ? 'none' : 'block';
+  // Hide red tick badge once opened
+  document.getElementById('notifBadge').style.display = 'none';
 }
 
 function toggleCardMenu(event, id) {
@@ -190,6 +193,13 @@ async function checkAuth() {
   }
 
   document.getElementById('userRoleDisplay').textContent = currentRole.toUpperCase();
+  
+  // Hide administration section for trainer role
+  let adminBtn = document.getElementById('adminNavBtn');
+  if (adminBtn) {
+    adminBtn.style.display = currentRole === 'admin' ? 'block' : 'none';
+  }
+
   document.getElementById('loginModal').style.display = 'none';
   load();
 }
@@ -290,8 +300,12 @@ function renderNotifications() {
 
   html += `<div style="font-weight:700; color:#172033; margin:8px 0 4px;">Recent System Updates & Validations</div>`;
   let pendingLogs = state.logs.filter(l => l.status === 'pending');
-  if (pendingLogs.length > 0 && currentRole === 'admin') {
-    html += `<div class="notif-item" style="background:#fef3c7; padding:8px; border-radius:8px; margin-bottom:6px; color:#d97706; font-weight:700;">⚠ ${pendingLogs.length} pending request(s) waiting for your validation!</div>`;
+  if (pendingLogs.length > 0) {
+    // Show red tick/dot indicator badge on notification button
+    document.getElementById('notifBadge').style.display = 'block';
+    if (currentRole === 'admin') {
+      html += `<div class="notif-item" style="background:#fef3c7; padding:8px; border-radius:8px; margin-bottom:6px; color:#d97706; font-weight:700;">⚠ ${pendingLogs.length} pending request(s) waiting for your validation!</div>`;
+    }
   }
 
   if (state.logs.length === 0) {
@@ -311,13 +325,20 @@ function filtered() {
   let activeItems = state.items.filter(x => x.status !== 'archived');
   if (nav === 'archived') activeItems = state.items.filter(x => x.status === 'archived');
   
-  return activeItems.filter(x => (!folder || x.folderId == folder) && (!q || [x.title, x.description, x.keywords, x.version, x.assessment, x.dataset].join(' ').toLowerCase().includes(q)) && (nav !== 'favorites' || x.favorite));
+  return activeItems.filter(x => {
+    let folderObj = state.folders.find(f => f.id == x.folderId);
+    let folderName = folderObj ? folderObj.name.toLowerCase() : '';
+    let matchesFolder = !folder || x.folderId == folder;
+    let matchesSearch = !q || [x.title, x.description, x.keywords, x.version, x.assessment, x.dataset, folderName].join(' ').toLowerCase().includes(q);
+    let matchesFav = nav !== 'favorites' || x.favorite;
+    return matchesFolder && matchesSearch && matchesFav;
+  });
 }
 
 function render() {
   document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('on', b.dataset.nav === nav));
   
-  if (nav === 'admin') return renderAdmin();
+  if (nav === 'admin' && currentRole === 'admin') return renderAdmin();
   if (nav === 'validation') return renderValidation();
   if (nav === 'archived') return renderArchived();
 
@@ -346,13 +367,16 @@ function renderDashboard() {
   let sortedItems = [...v].sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
   document.getElementById('view').innerHTML = `
-    <!-- SharePoint Quick Links Bar -->
+    <!-- SharePoint & FluidTopics Quick Links Bar -->
     <div style="display:flex; gap:15px; margin-bottom:24px; flex-wrap:wrap;">
       <a href="https://hpsmaroc.sharepoint.com/:x:/r/sites/HPSAcademy/_layouts/15/Doc.aspx?sourcedoc=%7B91B0B240-2B9D-492A-ACB6-E459D5C830E1%7D&file=E-TRN-Programme_Academy%202024%202025%202026.xlsx&action=default&mobileredirect=true&wdOrigin=TEAMS-MAGLEV.null_ns.rwc&wdExp=TEAMS-TREATMENT&wdhostclicktime=1767613982831&web=1" target="_blank" style="background:linear-gradient(135deg, #0078d4, #005a9e); color:white; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; box-shadow:0 4px 15px rgba(0,120,212,.2); display:flex; align-items:center; gap:8px;">
         📅 Planning
       </a>
       <a href="https://hpsmaroc.sharepoint.com/:x:/r/sites/HPSAcademy/_layouts/15/Doc.aspx?sourcedoc=%7B70D70AA5-35F9-4E89-AC73-56CCE7616932%7D&file=E-TRN-HPS_Academy_SinglePoint.xlsx&action=default&mobileredirect=true" target="_blank" style="background:linear-gradient(135deg, #107c41, #0b5a30); color:white; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; box-shadow:0 4px 15px rgba(16,124,65,.2); display:flex; align-items:center; gap:8px;">
         🎯 Single Point
+      </a>
+      <a href="https://doc.hps-worldwide.com" target="_blank" style="background:linear-gradient(135deg, #7c3aed, #4f46e5); color:white; padding:12px 22px; border-radius:10px; text-decoration:none; font-weight:700; box-shadow:0 4px 15px rgba(124,58,237,.2); display:flex; align-items:center; gap:8px;">
+        📚 FluidTopics
       </a>
     </div>
 
@@ -809,7 +833,6 @@ document.getElementById('materialForm').onsubmit = async e => {
       if (newMat) materialData.id = newMat.id;
     }
 
-    // Await the activity log insert so it commits reliably
     await logActivity(actionType, `Trainer submitted material edit for: ${materialData.title}`, 'pending', materialData);
 
     closeM('materialModal');
