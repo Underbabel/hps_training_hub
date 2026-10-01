@@ -156,7 +156,6 @@ function toggleNotifDropdown(e) {
 
 function toggleCardMenu(event, id) {
   event.stopPropagation();
-  // Close all other menus first
   document.querySelectorAll('.menu-dropdown').forEach(m => { if (m.id !== 'menu-' + id) m.style.display = 'none'; });
   let menu = document.getElementById('menu-' + id);
   if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
@@ -289,7 +288,12 @@ function renderNotifications() {
     });
   }
 
-  html += `<div style="font-weight:700; color:#172033; margin:8px 0 4px;">Recent System Updates</div>`;
+  html += `<div style="font-weight:700; color:#172033; margin:8px 0 4px;">Recent System Updates & Validations</div>`;
+  let pendingLogs = state.logs.filter(l => l.status === 'pending');
+  if (pendingLogs.length > 0 && currentRole === 'admin') {
+    html += `<div class="notif-item" style="background:#fef3c7; padding:8px; border-radius:8px; margin-bottom:6px; color:#d97706; font-weight:700;">⚠️️ ${pendingLogs.length} pending request(s) waiting for your validation!</div>`;
+  }
+
   if (state.logs.length === 0) {
     html += `<div class="notif-item muted">No recent updates.</div>`;
   } else {
@@ -454,7 +458,6 @@ function bindCards() {
   document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => detail(b.dataset.open));
   document.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEditMaterial(b.dataset.edit));
   
-  // Menu Actions
   document.querySelectorAll('[data-fav-menu]').forEach(b => b.onclick = async () => {
     let x = state.items.find(item => item.id == b.dataset.favMenu);
     if (!x) return;
@@ -796,15 +799,20 @@ document.getElementById('materialForm').onsubmit = async e => {
 
   if (currentRole === 'trainer') {
     let actionType = editId ? 'Material Edit Request' : 'Material Create Request';
-    if (editId) materialData.id = editId;
     
     if (editId) {
-      await _supabase.from('training_materials').update({ status: 'pending' }).eq('id', editId);
+      materialData.id = editId;
+      // Instantly update the record in database to 'pending' and apply the changes so they are visible
+      await _supabase.from('training_materials').update(materialData).eq('id', editId);
+    } else {
+      // For new material creation request by trainer, insert as pending directly
+      let { data: newMat, error: newErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
+      if (newMat) materialData.id = newMat.id;
     }
 
-    logActivity(actionType, `Trainer submitted material: ${materialData.title}`, 'pending', materialData);
+    logActivity(actionType, `Trainer submitted material edit for: ${materialData.title}`, 'pending', materialData);
     closeM('materialModal');
-    toast('⚠️ Submitted! Check Validation section for your approval status.');
+    toast('⚠️ Submitted for admin validation! Changes marked as pending.');
     await load();
     return;
   }
