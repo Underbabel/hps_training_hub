@@ -202,7 +202,7 @@ document.getElementById('loginForm').onsubmit = async e => {
   let { data, error } = await _supabase.auth.signInWithPassword({ email, password });
   if (error) { alert('Login failed: ' + error.message); return; }
   toast('Signed in successfully!');
-  logActivity('User Login', `User ${email} signed in.`);
+  await logActivity('User Login', `User ${email} signed in.`);
   checkAuth();
 };
 
@@ -398,19 +398,19 @@ async function editFolder(id, currentName) {
   let newName = prompt('Edit folder name:', currentName);
   if (!newName || !newName.trim()) return;
   if (currentRole === 'trainer') {
-    logActivity('Folder Edit Request', `Trainer requested renaming folder to ${newName}`, 'pending', { id, newName, status: 'published' });
+    await logActivity('Folder Edit Request', `Trainer requested renaming folder to ${newName}`, 'pending', { id, newName, status: 'published' });
     toast('⚠️ Folder edit submitted for admin approval!');
     return;
   }
   let { error } = await _supabase.from('folders').update({ name: newName.trim() }).eq('id', id);
-  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); logActivity('Folder Edited', `Folder renamed to ${newName}`, 'published'); await load(); }
+  if (error) { toast('Error updating folder'); } else { toast('Folder updated'); await logActivity('Folder Edited', `Folder renamed to ${newName}`, 'published'); await load(); }
 }
 
 async function deleteFolder(id, name) {
   if (currentRole !== 'admin') return;
   if (!confirm(`Delete folder "${name}"?`)) return;
   let { error } = await _supabase.from('folders').delete().eq('id', id);
-  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); logActivity('Folder Deleted', `Folder ${name} removed`, 'published'); await load(); }
+  if (error) { toast('Error deleting folder'); } else { toast('Folder deleted'); await logActivity('Folder Deleted', `Folder ${name} removed`, 'published'); await load(); }
 }
 
 function renderItems() {
@@ -472,7 +472,7 @@ function bindCards() {
     if (!x) return;
     if (confirm('Move this training material to the archive?')) {
       await _supabase.from('training_materials').update({ status: 'archived' }).eq('id', x.id);
-      logActivity('Material Archived', `Archived material: ${x?.title}`, 'archived');
+      await logActivity('Material Archived', `Archived material: ${x?.title}`, 'archived');
       await load();
       toast('Moved to Archive');
     }
@@ -484,7 +484,7 @@ function bindCards() {
     if (!x) return;
     if (confirm('Delete this training section?')) {
       await _supabase.from('training_materials').delete().eq('id', x.id);
-      logActivity('Material Deleted', `Deleted material: ${x?.title}`, 'published');
+      await logActivity('Material Deleted', `Deleted material: ${x?.title}`, 'published');
       await load();
       toast('Deleted');
     }
@@ -619,7 +619,7 @@ async function resetUserPassword(email) {
   let newPass = prompt(`Enter new temporary password for ${email}:`);
   if (!newPass) return;
   toast(`Password reset initiated for ${email}`);
-  logActivity('Password Reset', `Admin reset password for ${email}`, 'published');
+  await logActivity('Password Reset', `Admin reset password for ${email}`, 'published');
 }
 
 async function removeUser(userId) {
@@ -627,7 +627,7 @@ async function removeUser(userId) {
   let { error } = await _supabase.from('profiles').delete().eq('id', userId);
   if (error) { toast('Error removing user profile'); return; }
   toast('User removed successfully');
-  logActivity('User Removed', `Removed user ID ${userId}`, 'published');
+  await logActivity('User Removed', `Removed user ID ${userId}`, 'published');
   await load();
 }
 
@@ -638,7 +638,7 @@ async function sendBroadcast() {
   if (error) { toast('Error sending broadcast'); return; }
   document.getElementById('broadcastMsg').value = '';
   toast('Broadcast announcement sent to all users!');
-  load();
+  await load();
 }
 
 function renderValidation() {
@@ -738,16 +738,17 @@ document.getElementById('createFolder').onclick = async () => {
   if (state.folders.some(f => f.name.toLowerCase() === n.toLowerCase())) return toast('Folder already exists');
   
   if (currentRole === 'trainer') {
-    logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'pending', { name: n, status: 'published' });
+    await logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'pending', { name: n, status: 'published' });
     closeM('folderModal');
     toast('⚠ Folder creation submitted! Check Validation Log for status.');
+    await load();
     return;
   }
 
   let { error } = await _supabase.from('folders').insert([{ name: n, status }]);
   if (error) return toast('Error creating folder');
   closeM('folderModal');
-  logActivity('Folder Created', `Created folder ${n}`, 'published');
+  await logActivity('Folder Created', `Created folder ${n}`, 'published');
   await load();
   toast('Folder created');
 };
@@ -766,7 +767,7 @@ document.getElementById('userForm').onsubmit = async e => {
   }
   closeM('userModal');
   toast('User created successfully!');
-  logActivity('User Created', `Created user ${email} with role ${role}`, 'published');
+  await logActivity('User Created', `Created user ${email} with role ${role}`, 'published');
   await load();
 };
 
@@ -802,15 +803,13 @@ document.getElementById('materialForm').onsubmit = async e => {
     
     if (editId) {
       materialData.id = editId;
-      // 1. Update the row to pending in database so it shows up live with the pending badge
       await _supabase.from('training_materials').update(materialData).eq('id', editId);
     } else {
-      // For new material created by trainer, insert as pending
       let { data: newMat, error: newErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
       if (newMat) materialData.id = newMat.id;
     }
 
-    // 2. Explicitly log activity so the Admin's Validation queue and Notification Bell are triggered!
+    // Await the activity log insert so it commits reliably
     await logActivity(actionType, `Trainer submitted material edit for: ${materialData.title}`, 'pending', materialData);
 
     closeM('materialModal');
@@ -826,12 +825,12 @@ document.getElementById('materialForm').onsubmit = async e => {
     if (!updatedRows || updatedRows.length === 0) {
         return alert("Error: Update failed! Please verify database policies.");
     }
-    logActivity('Material Edited', `Updated material: ${materialData.title}`, 'published');
+    await logActivity('Material Edited', `Updated material: ${materialData.title}`, 'published');
   } else {
     let { data: matData, error: matErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
     if (matErr) { console.error('Material save error:', matErr); return toast('Error saving training material'); }
     materialId = matData.id;
-    logActivity('Material Created', `Created material: ${materialData.title}`, 'published');
+    await logActivity('Material Created', `Created material: ${materialData.title}`, 'published');
   }
 
   for (let file of pendingFiles) {
