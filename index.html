@@ -738,7 +738,7 @@ document.getElementById('createFolder').onclick = async () => {
   if (state.folders.some(f => f.name.toLowerCase() === n.toLowerCase())) return toast('Folder already exists');
   
   if (currentRole === 'trainer') {
-    logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'pending', { name: n, status });
+    logActivity('Folder Create Request', `Trainer requested folder: ${n}`, 'pending', { name: n, status: 'published' });
     closeM('folderModal');
     toast('⚠ Folder creation submitted! Check Validation Log for status.');
     return;
@@ -802,15 +802,17 @@ document.getElementById('materialForm').onsubmit = async e => {
     
     if (editId) {
       materialData.id = editId;
-      // Instantly update the database row status to 'pending' so the card updates immediately
+      // 1. Update the row to pending in database so it shows up live with the pending badge
       await _supabase.from('training_materials').update(materialData).eq('id', editId);
     } else {
-      // For new material created by trainer, save as pending directly so it appears on the dashboard
+      // For new material created by trainer, insert as pending
       let { data: newMat, error: newErr } = await _supabase.from('training_materials').insert([materialData]).select().single();
       if (newMat) materialData.id = newMat.id;
     }
 
-    logActivity(actionType, `Trainer submitted material: ${materialData.title}`, 'pending', materialData);
+    // 2. Explicitly log activity so the Admin's Validation queue and Notification Bell are triggered!
+    await logActivity(actionType, `Trainer submitted material edit for: ${materialData.title}`, 'pending', materialData);
+
     closeM('materialModal');
     toast('⚠️ Submitted for admin validation! Marked as pending.');
     await load();
